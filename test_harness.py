@@ -2,8 +2,7 @@
 Code for use in debugging. 
 IMPORTANT: check the configuration options at the start of the file.
 
-Author: Dana Nau <nau@umd.edu>
-Feb 8, 2021
+-- Dana Nau <nau@umd.edu>, June 6, 2021
 """
 
 import sys
@@ -12,20 +11,25 @@ import sys
 ################################################################################
 # Configuration options: 
 
+
 # If we're reading input from a terminal, let the code have pauses for paging.
 # You can override this by changing the value of allow_pauses below.
+
 if sys.stdin.isatty():
     allow_pauses = True
 else:
     allow_pauses = False
 
+
 # If the user is using IPython, assume that if they call the debugger,
 # they'll want IPython's debugger.
 # You can override this by changing the value of use_ipython below.
+
 if 'IPython' in sys.modules:
     use_ipython = True
 else:
     use_ipython = False
+
 
 ################################################################################
 

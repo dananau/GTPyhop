@@ -2,16 +2,16 @@
 An expanded version of the "travel from home to the park" example in
 my lectures, modified to show how an unexpected problem at acting time can
 cause an execution error if the methods are too brittle.
-
-Author: Dana Nau <nau@umd.edu>
-June 5, 2021
+-- Dana Nau <nau@umd.edu>, June 6, 2021
 """
 
-# kludge to make gtpyhop available from the parent directory
+# kludge to make gtpyhop available regardless of whether the current directory
+# is the Examples directory or its parent (where gtpyhop.py is located)
+#
 import sys
-sys.path.append('../')  
-
+sys.path.append('../')
 import gtpyhop
+
 import random
 
 

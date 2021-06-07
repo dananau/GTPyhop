@@ -1,7 +1,6 @@
 """
-Method definitions for for blocks_goals.
-Author: Dana Nau <nau@umd.edu>
-June 3, 2021
+Method definitions for blocks_goals.
+-- Dana Nau <nau@umd.edu>, June 6, 2021
 """
 
 import gtpyhop

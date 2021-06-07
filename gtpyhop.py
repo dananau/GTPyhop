@@ -1,3 +1,9 @@
+# Author: Dana Nau <nau@umd.edu>
+# June 6, 2021
+#
+# Copyright (c) 2021, University of Maryland
+# BSD 3-Clause License
+
 """
 GTPyhop is a planner based on Pyhop, that can plan for both tasks and
 goals. It requires Python 3. 
@@ -21,8 +27,8 @@ docstrings for find_plan and run_lazy_lookahead.
 - global variables:
     current_domain         verbose          verify_goals
 
-Accompanying this file are a README.md file that's an overview of GTPyhop,
-and several files to give examples of how to use GTPyhop. To run them, try
+Accompanying this file are a README.md file that gives an overview of GTPyhop,
+and several files that give examples of how to use GTPyhop. To run them, try
 importing one or more of the following from the Examples directory:
     simple_goals                simple_tasks
     simple_tasks_with_error     backtracking_tasks

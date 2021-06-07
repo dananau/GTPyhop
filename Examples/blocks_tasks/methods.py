@@ -1,7 +1,6 @@
 """
-Method definitions for for blocks_tasks.
-Author: Dana Nau <nau@umd.edu>
-June 3, 2021
+Method definitions for blocks_tasks.
+-- Dana Nau <nau@umd.edu>, June 6, 2021
 """
 
 import gtpyhop

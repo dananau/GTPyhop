@@ -1,21 +1,19 @@
 """
-The simple_travel_example.py file from the Pyhop distribution, with minor
-changes to make it compatible with GTPyhop.
-Author: Dana Nau <nau@umd.edu>
-June 5, 2021
+The simple_travel_example.py file from the Pyhop distribution, with the
+following minor changes to make it compatible with GTPyhop:
+  - replace all references to pyhop with references to gtpyhop
+  - change 'verbose' from a keyword argument to a global variable
 
-Unlike the other example files, this one doesn't use the test harness,
-because I wanted to keep things as close as possible to the Pyhop version of
-the file.
-
-To make the code work with GTPyhop, the necessary changes were:
-- use gtpyhop module instead of pyhop
-- replace keyword argument 'verbose' with global variable 'gtpyhop.verbose'
+To keep this file as close as possible to the Pyhop version, it doesn't use
+the test harness that's used with the other example files.
+-- Dana Nau <nau@umd.edu>, June 6, 2021
 """
 
-# kludge to make GTPyhop available from the parent directory
+# kludge to make gtpyhop available regardless of whether the current directory
+# is the Examples directory or its parent (where gtpyhop.py is located)
+#
 import sys
-sys.path.append('../')  
+sys.path.append('../')
 import gtpyhop
 
 

@@ -1,7 +1,6 @@
 """
-Method definitions for for blocks_goal_splitting.
-Author: Dana Nau <nau@umd.edu>
-June 3, 2021
+Method definitions for blocks_goal_splitting.
+-- Dana Nau <nau@umd.edu>, June 6, 2021
 """
 
 import gtpyhop

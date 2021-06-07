@@ -1,7 +1,6 @@
 """
 Examples file for blocks_goals.
-Author: Dana Nau <nau@umd.edu>
-June 3, 2021
+-- Dana Nau <nau@umd.edu>, June 6, 2021
 """
 
 # For use in debugging:
@@ -83,6 +82,10 @@ should be. However, goal1a and goal1b have the same solution plans, because
     goal1b.pos={'c':'b', 'b':'a'}
 
     goal1b.display()
+
+    # Tell the test harness what answer to expect, so it can signal an error
+    # if gtpyhop returns an incorrect answer. Checks like this have been very
+    # very helpful for debugging both gtpyhop and the various example domains.
 
     expected = [('unstack', 'a', 'b'), ('putdown', 'a'), ('pickup', 'b'), ('stack', 'b', 'a'), ('pickup', 'c'), ('stack', 'c', 'b')] 
 

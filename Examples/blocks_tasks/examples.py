@@ -1,7 +1,6 @@
 """
 Examples file for blocks_tasks.
-Author: Dana Nau <nau@umd.edu>
-June 3, 2021
+-- Dana Nau <nau@umd.edu>, June 6, 2021
 """
 
 # For use in debugging:
@@ -79,6 +78,9 @@ positions. The initial state says a, b, and c are the only blocks. Thus
 First, here's ('move_blocks', goal1a):
     """)
 
+    # Tell the test harness what answer to expect, so it can signal an error
+    # if gtpyhop returns an incorrect answer. Checks like this have been very
+    # very helpful for debugging both gtpyhop and the various example domains.
 
     expected = [('unstack', 'a', 'b'), ('putdown', 'a'), ('pickup', 'b'), ('stack', 'b', 'a'), ('pickup', 'c'), ('stack', 'c', 'b')] 
 

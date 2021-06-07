@@ -1,17 +1,17 @@
 """
-Action definitions for blocks_tasks, blocks_goals, and blocks_goal_splitting.
-Author: Dana Nau <nau@umd.edu>
-June 3, 2021
+Action definitions file for the blocks_tasks, blocks_goals, and
+blocks_goal_splitting examples.
+-- Dana Nau <nau@umd.edu>, June 6, 2021
 """
 
 import gtpyhop
 
-"""Each gtpyhop action is a Python function. The 1st argument is
-the current state, and the others are the action's usual arguments.
-This is analogous to how methods are defined for Python classes (where
-the first argument is always the name of the class instance). For example,
-the function pickup(state,b) implements the action for the task
-('pickup', b).
+"""
+Each gtpyhop action is a Python function. The 1st argument is the current
+state, and the others are the action's usual arguments. This is analogous to
+how methods are defined for Python classes (where the first argument is
+always the name of the class instance). For example, the function
+pickup(state,b) implements the action for the task ('pickup', b).
 
 The blocks-world actions use three state variables:
 - pos[b] = block b's position, which may be 'table', 'hand', or another block.
@@ -50,9 +50,6 @@ def stack(state,b1,b2):
         return state
 
 
-"""
-Below, 'declare_actions(pickup, unstack, putdown, stack)' tells gtpyhop
-what the actions are. Note that the action names are *not* quoted.
-"""
-
+# Tell Pyhop what the actions are
+#
 gtpyhop.declare_actions(pickup, unstack, putdown, stack)

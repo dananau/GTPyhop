@@ -1,7 +1,6 @@
 """
 Examples file for blocks_goal_splitting.
-Author: Dana Nau <nau@umd.edu>
-June 3, 2021
+-- Dana Nau <nau@umd.edu>, June 6, 2021
 """
 
 # For use in debugging:
@@ -54,6 +53,10 @@ how to choose the best order for achieving the goals.
 """)
 
     state1.display("Initial state is")
+
+    # Tell the test harness what answer to expect, so it can signal an error
+    # if gtpyhop returns an incorrect answer. Checks like this have been very
+    # very helpful for debugging both gtpyhop and the various example domains.
 
     expected = [('unstack', 'a', 'b'), ('putdown', 'a'), ('pickup', 'c'), ('stack', 'c', 'b'), ('unstack', 'c', 'b'), ('putdown', 'c'), ('pickup', 'b'), ('stack', 'b', 'a'), ('pickup', 'c'), ('stack', 'c', 'b')]
 

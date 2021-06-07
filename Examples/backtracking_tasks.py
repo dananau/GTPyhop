@@ -1,14 +1,15 @@
 """
-Some examples that show GTPyhop backtracking over several goals and methods.
-Author: Dana Nau <nau@umd.edu>
-June 5, 2021
+Some examples that show GTPyhop backtracking through several methods and tasks.
+-- Dana Nau <nau@umd.edu>, June 6, 2021
 """
 
 import sys
 
-# kludge to make gtpyhop available from the parent directory
-sys.path.append('../')  
-
+# kludge to make gtpyhop available regardless of whether the current directory
+# is the Examples directory or its parent (where gtpyhop.py is located)
+#
+import sys
+sys.path.append('../')
 import gtpyhop
 
 # This avoids hard-coding the domain name, making the code more portable
