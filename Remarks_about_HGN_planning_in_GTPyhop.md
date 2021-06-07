@@ -45,6 +45,7 @@ Then we can write the following two methods:
 
         def m_unload_at_loc(state, container, location):
             r = state.loc[container]
+            # is_a should be a function for determining an object's type
             if is_a(r, 'robot') and state.loc[r] == location:
                 return [('unload', r, container, location)]
 
