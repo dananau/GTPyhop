@@ -2,7 +2,7 @@
 
 > Dana Nau  
 > University of Maryland  
-> June 3, 2021
+> June 7, 2021
 
 
 ### Contents:
@@ -14,9 +14,9 @@
 
 ## <span id="GDP">Comparison with GDP</span>
 
-In HGN planners such as GDP [1] and GoDel [2], an action may be applied to a goal if the current state satisfies all of the action's preconditions, at least one of its effects matches a goal, and none of its effects negates any of the goals. In contrast, GTPyhop does not apply actions directly to goals. GTPyhop will not put an action into the plan unless the action is in the agenda, either because it was there initially or because a method put it there.
+In HGN planners such as GDP [1] and GoDel [2], an action *a* may be applied to a goal if the current state satisfies *a*'s preconditions, *a* has an effect that matches the goal, and none of *a*'s effects negate the goal. In contrast, GTPyhop does not apply actions directly to goals. GTPyhop will not put an action into the plan unless the action is in the agenda, either because it was there initially or because a method put it there.
 
-For example, consider a classical action (written in state-variable notation [3]) for unloading a container from a robot at a particular location:
+To see why, consider a classical action (written in state-variable notation [3]) for unloading a container from a robot at a particular location:
 
         unload(robot, container, location):
             precond: loc[robot] = location, loc[container] = robot
@@ -41,7 +41,7 @@ In GTPyhop, one can still use actions to accomplish goals, with much less comput
 
 Then we can write the following two methods:
 
-- A method `m_unload_at_loc` that we declare relevant for goal 1, which is `('loc', container, location)` in GTPyhop notation.  If `container` is currently on a robot whose location is `location`, then this method will use `unload` to unload the container:
+- A goal-method `m_unload_at_loc` that we declare relevant for goal 1.  If `container` is currently on a robot whose location is `location`, then this method will return the desired `unload` action:
 
         def m_unload_at_loc(state, container, location):
             r = state.loc[container]
@@ -50,9 +50,9 @@ Then we can write the following two methods:
 
         gtpyhop.declare_unigoal_methods('loc', m_unload_at_loc)
 
-    The above code requires a helper function `is_a` that tells what an object's type is.
+    The `declare_unigoal_methods` declaration makes `m_unload_at_loc` relevant for `('loc', container, location)`, which is goal 1 in GTPyhop notation.
     
-- A method `m_unload_cargo` that we declare relevant for goal 2, which is `('cargo', robot, desired_cargo)` in GTPyhop notation. If the desired cargo is `nil` (i.e., empty) and the robot's cargo is non-`nil` in the current state, then this method will use `unload` to unload the cargo:
+- A goal-method `m_unload_cargo` that we declare relevant for goal 2. If the desired cargo is `'nil'` (i.e., empty) and the robot's current cargo isn't `'nil'`, then this method will return the desired `unload` action:
 
         def m_unload_cargo(state, robot, desired_cargo):
             c = state.cargo[robot]
@@ -61,6 +61,8 @@ Then we can write the following two methods:
 
         gtpyhop.declare_unigoal_methods('cargo', m_unload_cargo)
 
+    The `declare_unigoal_methods` declaration makes `m_unload_cargo` relevant for `('cargo', robot, desired_cargo)`, which is goal 2 in GTPyhop notation.
+    
 If a domain definition includes such methods for all of the actions, then GTPyhop will behave similarly to GDP -- though not identically, since GTPyhop won't have access to the heuristic function that GDP uses to guide its search.
 
 
