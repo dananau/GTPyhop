@@ -1,33 +1,5 @@
 
 # Remarks about HGN planning in GTPyhop
-<style type="text/css">
-h1 { counter-reset: h2counter; }
-h2 { counter-reset: h3counter; }
-h3 { counter-reset: h4counter; }
-h4 { counter-reset: h5counter; }
-h5 { counter-reset: h6counter; }
-h6 {}
-h2:before {
-    counter-increment: h2counter;
-    content: counter(h2counter) ".\0000a0\0000a0";
-}
-h3:before {
-    counter-increment: h3counter;
-    content: counter(h2counter) "." counter(h3counter) ".\0000a0\0000a0";
-}
-h4:before {
-    counter-increment: h4counter;
-    content: counter(h2counter) "." counter(h3counter) "." counter(h4counter) ".\0000a0\0000a0";
-}
-h5:before {
-    counter-increment: h5counter;
-    content: counter(h2counter) "." counter(h3counter) "." counter(h4counter) "." counter(h5counter) ".\0000a0\0000a0";
-}
-h6:before {
-    counter-increment: h6counter;
-    content: counter(h2counter) "." counter(h3counter) "." counter(h4counter) "." counter(h5counter) "." counter(h6counter) ".\0000a0\0000a0";
-}
-</style>
 
 > **Dana Nau**<br>
 > University of Maryland  <br>
@@ -44,7 +16,7 @@ h6:before {
  1. [Comparison with HGNpyhop](#HGNpyhop)
  1. [References](#References)
 
-## <span id="States">States and actions</span>
+## <span id="States">1. States and actions</span>
 
 ### States
 
@@ -86,7 +58,7 @@ In Pyhop it would be written the same way, except for two minor differences:
  - The last line refers to `gtpyhop` rather than `pyhop`.
  
 
-## <span id="Tasks">Tasks and task methods</span>
+## <span id="Tasks">2. Tasks and task methods</span>
 
 In GTPyhop, as in Pyhop, a task is written as a tuple that specifies an activity to perform, e.g.,
 
@@ -113,7 +85,7 @@ The method definition is the same as it would be in Pyhop, except for two minor 
 - The last line of the definition refers to `gtpyhop:declare_task_methods` rather than `pyhop:declare_methods`.
 
 
-## <span id="Goals">Goals and goal methods</span>
+## <span id="Goals">3. Goals and goal methods</span>
 
 GTPyhop has two types of goals: *unigoals* (individual goals) and *multigoals* (conjunctions of individual goals).
 
@@ -188,7 +160,7 @@ For the above method to work, we would need to define a unigoal method, e.g., `m
     gtpyhop.declare_unigoal_methods('loc', move_c_to_loc)
 
 
-## <span id="Other">Other properties of goals and tasks</span>
+## <span id="Other">4. Other properties of goals and tasks</span>
 
 ### Hybrid goal- and task-planning
 
@@ -211,7 +183,7 @@ An obvious question is whether such checks are useful. They may be useful while 
 Depending on feedback from users, I'll consider whether to make `verify_goals = False` the default.
 
 
-## <span id="GDP">Comparison with GDP and GoDel</span>
+## <span id="GDP">5. Comparison with GDP and GoDel</span>
 
 In HGN planners such as GDP [1] and GoDel [2], an action *a* may be applied to a goal if the current state satisfies *a*'s preconditions, *a* has an effect that matches the goal, and none of *a*'s effects negate the goal. In contrast, GTPyhop does not apply actions directly to goals. GTPyhop will not put an action into the plan unless the action is in the agenda, either because it was there initially or because a method put it there.
 
@@ -267,7 +239,7 @@ If a domain definition includes such methods for all of the actions, then GTPyho
 
 
 
-## <span id="HGNpyhop">Comparison with HGNPyhop</span>
+## <span id="HGNpyhop">6. Comparison with HGNPyhop</span>
 
 There is a fork of Pyhop called [HGNpyhop](https://github.com/ospur/hgn-pyhop),
 in which one may declare an action to be directly relevant for a goal. At first glance, this seems like a desirable feature, and I seriously considered adding it to GTPyhop -- but I ultimately decided against it, for the following reason.
@@ -320,7 +292,7 @@ Such a definition of the `unload` action is quite unintuitive. Furthermore, one 
 
 ---------
 
-## <span id="References">References</span>
+## <span id="References">7. References</span>
 
 [1] V. Shivashankar, U. Kuter, D. S. Nau, and R. Alford. [A hierarchical goal-based formalism and algorithm for single-agent planning](https://www.cs.umd.edu/~nau/papers/shivashankar2012hierarchical.pdf). In Proc. International Conference on Autonomous Agents and Multiagent Systems (AAMAS), 2012.
 
