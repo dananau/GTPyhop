@@ -39,6 +39,10 @@ This specifies that
 
 Note that each state variable has exactly one argument, e.g., `'alice'` or `'taxi1'`. However, the argument may be any hashable Python object, e.g., `'alice'` or the tuple  `('station','home')`, but not the list `['station','home']`.
 
+Although a `State` is object is used mainly to represent a state of the world, it can also be used for other collections of variables. For example, the following file uses a `State` object named `rigid` to contain some "rigid relations" that are true in every state of the world:
+
+    Examples/simple_goals.py
+
 ### Actions
 
 Actions in GTPyhop are written in much the same way as in Pyhop. For example, here is a GTPyhop action for unloading a container from a robot at a particular location:
