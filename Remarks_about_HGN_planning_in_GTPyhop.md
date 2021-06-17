@@ -119,6 +119,10 @@ The above declaration tells GTPyhop that `m_unload_at_loc` is relevant not only 
 
     gtpyhop.declare_unigoal_methods('loc', m_unload_at_loc)
 
+For an example of a situation where such restrictions are important, see the definitions of `m_move1`, `m_get`, and `m_put` in the following file:
+
+    Examples/blocks_goals/methods.py
+
 ### Multigoals
 
 Syntactically, a multigoal looks similar to a state -- but unlike a state, it specifies desired (rather than current) values for some (rather than all) of the state variables. For example, here is a multigoal saying we want to reach any state `s` such that `s.loc['c1'] = 'loc2'` and `s.loc['c3'] = 'loc4'`:
