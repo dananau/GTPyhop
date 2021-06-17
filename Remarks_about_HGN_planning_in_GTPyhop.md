@@ -248,25 +248,25 @@ To make an action relevant for a goal of the form `(variable, arg, value)`, [HGN
 
  - To make the `unload` action relevant for `('loc', container, location)`, we would need to rewrite it to be callable as `unload(state,container,location)`, and declare it relevant for `loc`. The rewrite would need to look like the following, where `is_a` would be a helper function for determining an object's type:
 
-    def unload(state, container, location):
-        r = state.loc[container]
-        if is_a(r,'robot') and state.loc[r] == location:
-            state.loc[container] = location
-            state.cargo[r] = 'nil'
-            return state
+        def unload(state, container, location):
+            r = state.loc[container]
+            if is_a(r,'robot') and state.loc[r] == location:
+                state.loc[container] = location
+                state.cargo[r] = 'nil'
+                return state
 
-    hgn_pyhop.declare_operators('loc', unload)
+        hgn_pyhop.declare_operators('loc', unload)
 
  - In contrast, to make `unload` relevant for `('cargo', robot, desired_cargo)`, we would need to rewrite it to be callable as `unload(robot, desired_cargo)`, and declare it relevant for `cargo`. The rewrite would need to look like this:
 
-    def unload(state, robot, desired_cargo):
-        c = state.cargo[robot]
-        if desired_cargo == 'nil' and c != 'nil':
-            state.loc[c] = state.loc[robot]
-            state.cargo[robot] = 'nil'
-            return state
+        def unload(state, robot, desired_cargo):
+            c = state.cargo[robot]
+            if desired_cargo == 'nil' and c != 'nil':
+                state.loc[c] = state.loc[robot]
+                state.cargo[robot] = 'nil'
+                return state
 
-    hgn_pyhop.declare_operators('cargo', unload)
+        hgn_pyhop.declare_operators('cargo', unload)
  
 Both rewrites make the `unload` action harder to understand, and neither of them satisfies the requirement that in HGN planning algorithms such as GDP and Godel, `unload` must be relevant for *both* goals. To accomplish this in HGNpyhop, I think something like the following might work, though I haven't tested it to make sure:
 
