@@ -39,8 +39,7 @@ This specifies that
 
 Note that each state variable has exactly one argument, e.g., `'alice'` or `'taxi1'`. However, the argument may be any hashable Python object, e.g., `'alice'` or the tuple  `('station','home')`, but not the list `['station','home']`.
 
-Although a `State` is object is used mainly to represent a state of the world, it can also be used for other collections of variables. For example, in the [Examples/simple_goals.py](Examples/simple_goals.py) file, there is a `State` object named `rigid` that contains some "rigid relations" that are true in every state of the world:
-
+Although a `State` is object is used mainly to represent a state of the world, it can also be used for other collections of variables. For example, in the [Examples/simple_goals.py](Examples/simple_goals.py) file, the `State` object named `rigid` contains some "rigid relations", i.e., properties that are true in every state of the world.
     
 
 ### Actions
@@ -123,9 +122,8 @@ The above declaration tells GTPyhop that `m_unload_at_loc` is relevant not only 
 
     gtpyhop.declare_unigoal_methods('loc', m_unload_at_loc)
 
-For an example of a situation where such restrictions are important, see the definitions of `m_move1`, `m_get`, and `m_put` in the following file:
-
-    Examples/blocks_goals/methods.py
+For an example of a situation where such restrictions are important, see the definitions of `m_move1`, `m_get`, and `m_put` in the [Examples/blocks_goals/methods.py](Examples/blocks_goals/methods.py) file.
+    
 
 ### Multigoals
 
