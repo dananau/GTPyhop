@@ -1,3 +1,5 @@
+
+# Remarks about HGN planning in GTPyhop
 <style type="text/css">
 h1 { counter-reset: h2counter; }
 h2 { counter-reset: h3counter; }
@@ -26,8 +28,6 @@ h6:before {
     content: counter(h2counter) "." counter(h3counter) "." counter(h4counter) "." counter(h5counter) "." counter(h6counter) ".\0000a0\0000a0";
 }
 </style>
-
-# Remarks about HGN planning in GTPyhop
 
 > **Dana Nau**<br>
 > University of Maryland  <br>
