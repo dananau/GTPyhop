@@ -166,7 +166,7 @@ For the above method to work, we would need to define a unigoal method, e.g., `m
 
 It is easy to have both goal methods and task methods in the same planning domain. Any method, regardless of whether it is a task method or goal method, can return a list that contains actions, subtasks, and subgoals. For example, in the `m_move_to_loc2` multigoal-method defined earlier, we could replace the last line with
 
-            return [('move_container', c, mg.loc[c]) for c in containers_to_move]
+    return [('move_container', c, mg.loc[c]) for c in containers_to_move]
 
 where `move_container` is a task for which we have declared one or more task methods.
 
@@ -178,7 +178,7 @@ To perform this check, GTPyhop inserts into the agenda, immediately after the su
 
 An obvious question is whether such checks are useful. They may be useful while developing and debugging a domain, but the proliferation of verification tasks in the agenda adds overhead and interferes with readability of GTPyhop's debugging printout. Thus one may prefer to turn them off -- which can be done by putting the following into the domain definition or at the beginning of a planning problem:
 
-        verify_goals = False 
+    verify_goals = False 
 
 Depending on feedback from users, I'll consider whether to make `verify_goals = False` the default.
 
