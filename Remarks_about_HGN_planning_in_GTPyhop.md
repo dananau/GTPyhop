@@ -178,9 +178,7 @@ To perform this check, GTPyhop inserts into the agenda, immediately after the su
 
 An obvious question is whether such checks are useful. They may be useful while developing and debugging a domain, but the proliferation of verification tasks in the agenda adds overhead and interferes with readability of GTPyhop's debugging printout. Thus one may prefer to turn them off -- which can be done by putting the following into the domain definition or at the beginning of a planning problem:
 
-
     verify_goals = False 
-
 
 Depending on feedback from users, I'll consider whether to make `verify_goals = False` the default.
 
