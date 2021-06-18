@@ -98,7 +98,7 @@ A unigoal is a 3-tuple `(state_variable_name, arg, value)` that specifies a desi
 
     ('loc', 'c1', 'loc2') 
 
-Notice that the above triple is syntactically indistinguishable from a taskname with two arguments. The way to tell GTPyhop that it is a unigoal, rather than a task, is to declare a *unigoal method* for it. A unigoal method always takes three arguments: the current state, and the name and argument of the state-variable. It returns a list of actions, tasks, and goals. For example, here is a method for the above unigoal:
+Notice that the above triple has the same syntax as a taskname with two arguments. The way to tell GTPyhop that it is a unigoal, rather than a task, is to declare a *unigoal method* for it. A unigoal method always takes three arguments: the current state, and the name and argument of the state-variable. It returns a list of actions, tasks, and goals. For example, here is a method for the above unigoal:
 
     def m_unload_at_loc(state, container, location):
         r = state.loc[container]
