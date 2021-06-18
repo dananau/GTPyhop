@@ -56,9 +56,9 @@ Actions in GTPyhop are written in much the same way as in Pyhop. For example, he
 
 In Pyhop it would be written the same way, except for two minor differences:
 
-- If the action is inapplicable (i.e., if the `if` test fails), Pyhop would require it to return `False`, but in GTPyhop it may either return `False` or (as above) not return a value.
+- If an action is inapplicable (i.e., if the `if` test fails in the above example), Pyhop requires it to return `False`. In GTPyhop, it may either return `False` or (as above) not return a value.
 
- - The last line refers to `gtpyhop` rather than `pyhop`.
+ - The last line refers to `gtpyhop.declare_actions` rather than `pyhop.declare_actions`.
  
 
 ## <span id="Tasks">2. Tasks and task methods</span>
@@ -67,7 +67,7 @@ In GTPyhop, as in Pyhop, a task is written as a tuple that specifies an activity
 
     (task_name, arg1, arg2, ..., argn)
 
-Methods for tasks are written nearly the same as in Pyhop. For example, this:
+Methods for tasks look nearly the same as in Pyhop. For example, this:
 
     def m_unload_container(state, container, location):
         # for this to work, we need an 'is_a' function to determine an object's type
@@ -77,13 +77,13 @@ Methods for tasks are written nearly the same as in Pyhop. For example, this:
 
     gtpyhop.declare_task_methods('unload_container', m_unload_container)
 
-tells GTPyhop to consider using `m_unload_container` for any task of the form
+defines a task method called `m_unload_container` and tells GTPyhop to consider using it for any task of the form
 
     ('unload_container' container location)
 
 The method definition is the same as it would be in Pyhop, except for two minor differences:
 
-- If the method is inapplicable (i.e., if the `if` test fails), Pyhop would require the method to return the value `False`, but in GTPyhop it may either return `False` or (as above) not return a value.
+- If a method is inapplicable (i.e., if the `if` test fails in the above example), Pyhop requires it to return `False`. In GTPyhop, it may either return `False` or (as above) not return a value.
 
 - The last line of the definition refers to `gtpyhop:declare_task_methods` rather than `pyhop:declare_methods`.
 
@@ -94,11 +94,11 @@ GTPyhop has two types of goals: *unigoals* (individual goals) and *multigoals* (
 
 ### Unigoals
 
-A unigoal is a 3-tuple `(state_variable_name, arg, value)` that specifies a desired value for a state variable. For example, the following unigoal represents the goal of reaching a state `s` such that `s.loc['c1'] = 'loc2'`. 
+A unigoal is a 3-tuple `(state_variable_name, arg, value)` that specifies a desired value for a state variable. For example, the following unigoal represents the goal of reaching a state `s` such that `s.loc['c1'] = 'loc2'`:
 
     ('loc', 'c1', 'loc2') 
 
-The above triple is syntactically indistinguishable from a taskname with two arguments. What tells GTPyhop that it is a unigoal, rather than a task, is if we declare a unigoal method for it. A unigoal method always takes three arguments: the current state, and the name and argument of the state-variable. It returns a list of actions, tasks, and goals. For example, here is a method for the above unigoal:
+Notice that the above triple is syntactically indistinguishable from a taskname with two arguments. The way to tell GTPyhop that it is a unigoal, rather than a task, is to declare a *unigoal method* for it. A unigoal method always takes three arguments: the current state, and the name and argument of the state-variable. It returns a list of actions, tasks, and goals. For example, here is a method for the above unigoal:
 
     def m_unload_at_loc(state, container, location):
         r = state.loc[container]
