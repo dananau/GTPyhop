@@ -1,6 +1,6 @@
 """
 Method definitions for blocks_goals.
--- Dana Nau <nau@umd.edu>, June 6, 2021
+-- Dana Nau <nau@umd.edu>, June 17, 2021
 """
 
 import gtpyhop
@@ -92,6 +92,10 @@ def m_move1(state,b1,b2):
     """
     if  b2 != 'hand' and state.clear[b1] and state.holding['hand'] == False:
         if b2 == 'table' or state.clear[b2]:
+            # Below, the subgoals work as follows.
+            # ('pos', b1, 'hand') will trigger m_get, then ('pos', b1, b2)
+            # will trigger m_put. Neither of them will trigger m_move1 again,
+            # because m_move1's preconditions won't be satisfied.
             return [('pos', b1, 'hand'), ('pos', b1, b2)]
 
 def m_get(state,b1,b2):
