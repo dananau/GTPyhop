@@ -98,7 +98,7 @@ A unigoal is a 3-tuple `(state_variable_name, arg, value)` that specifies a desi
 
     ('loc', 'c1', 'loc2') 
 
-Notice that the above triple has the same syntax as a taskname with two arguments. The way to tell GTPyhop that it is a unigoal, rather than a task, is to declare a *unigoal method* for it. A unigoal method always takes three arguments: the current state, and the name and argument of the state-variable. If a unigoal method is applicable, it returns a list of actions, tasks, and goals. For example, here is a method for the above unigoal:
+Notice that the above triple has the same syntax as a taskname with two arguments. The way to tell GTPyhop that it is a unigoal, rather than a task, is to declare a *unigoal method* for it. A unigoal method always takes three arguments: the current state, and the name and argument of the state-variable. If a unigoal method is applicable, it returns a (possibly empty) list of actions, tasks, and goals. For example, here is a method for the above unigoal:
 
     def m_unload_at_loc(state, container, location):
         r = state.loc[container]
@@ -132,7 +132,7 @@ Syntactically, a multigoal looks similar to a state -- but unlike a state, it sp
     g = Multigoal('goal1')
     g.loc = {'c1':'loc2', 'c3':'loc4'}
 
-A multigoal method always takes two arguments: the current state and the multigoal.  It returns a list of actions, tasks, and goals. For example, here is a multigoal method that might be useful for `goal1`:
+A multigoal method always takes two arguments: the current state and the multigoal.  If it is applicable, it returns a (possibly empty) list of actions, tasks, and goals. For example, here is a multigoal method that might be useful for `goal1`:
 
     def m_move_to_loc2(state,mg):
         containers_to_move = [c for c in mg.loc if \
