@@ -3,7 +3,7 @@
 
 > **Dana Nau**<br>
 > University of Maryland  <br>
-> June 17, 2021
+> June 22, 2021
 
 
 **Contents:**
@@ -70,7 +70,7 @@ In GTPyhop, as in Pyhop, a task is written as a tuple that specifies an activity
 Methods for tasks look nearly the same as in Pyhop. For example, this:
 
     def m_unload_container(state, container, location):
-        # for this to work, we need an 'is_a' function to determine an object's type
+        # 'is_a' needs to be a function that returns an object's type
         r = state.loc[container]
         if is_a(r, 'robot') and state.loc[r] == location:
             return [('unload', r, container, location)]
@@ -102,7 +102,7 @@ Notice that the above triple has the same syntax as a taskname with two argument
 
     def m_unload_at_loc(state, container, location):
         r = state.loc[container]
-        # is_a should be a function for determining an object's type
+        # 'is_a' needs to be a function that returns an object's type
         if is_a(r, 'robot') and state.loc[r] == location:
             return [('unload', r, container, location)]
 
@@ -220,24 +220,24 @@ Then we can write the following two methods:
 
 - A goal-method `m_unload_at_loc` that we declare relevant for goal 1.  If `container` is currently on a robot whose location is `location`, then this method will return the desired `unload` action:
 
-    def m_unload_at_loc(state, container, location):
-        r = state.loc[container]
-        # is_a should be a function for determining an object's type
-        if is_a(r, 'robot') and state.loc[r] == location:
-            return [('unload', r, container, location)]
+        def m_unload_at_loc(state, container, location):
+            r = state.loc[container]
+            # 'is_a' needs to be a function that returns an object's type
+            if is_a(r, 'robot') and state.loc[r] == location:
+                return [('unload', r, container, location)]
 
-    gtpyhop.declare_unigoal_methods('loc', m_unload_at_loc)
+        gtpyhop.declare_unigoal_methods('loc', m_unload_at_loc)
 
     The `declare_unigoal_methods` declaration makes `m_unload_at_loc` relevant for `('loc', container, location)`, which is goal 1 in GTPyhop notation.
     
 - A goal-method `m_unload_cargo` that we declare relevant for goal 2. If the desired cargo is `'nil'` (i.e., empty) and the robot's current cargo isn't `'nil'`, then this method will return the desired `unload` action:
 
-    def m_unload_cargo(state, robot, desired_cargo):
-        c = state.cargo[robot]
-        if desired_cargo == 'nil' and c != 'nil':
-            return [('unload', robot, c, state.loc[robot])]
+        def m_unload_cargo(state, robot, desired_cargo):
+            c = state.cargo[robot]
+            if desired_cargo == 'nil' and c != 'nil':
+                return [('unload', robot, c, state.loc[robot])]
 
-    gtpyhop.declare_unigoal_methods('cargo', m_unload_cargo)
+        gtpyhop.declare_unigoal_methods('cargo', m_unload_cargo)
 
     The `declare_unigoal_methods` declaration makes `m_unload_cargo` relevant for `('cargo', robot, desired_cargo)`, which is goal 2 in GTPyhop notation.
     
@@ -247,15 +247,15 @@ If a domain definition includes such methods for all of the actions, then GTPyho
 
 ## <span id="HGNpyhop">6. Comparison with HGNPyhop</span>
 
-There is a fork of Pyhop called [HGNpyhop](https://github.com/ospur/hgn-pyhop),
-in which one may declare an action to be directly relevant for a goal. At first glance, this seems like a desirable feature, and I seriously considered adding it to GTPyhop -- but I ultimately decided against it, for the following reason.
+There is a fork of Pyhop called [HGNpyhop](https://github.com/ospur/hgn-pyhop) in which one may declare an action to be directly relevant for a goal. At first glance, this seems like a desirable feature, and I seriously considered adding it to GTPyhop -- but I ultimately decided against it, because it imposes significant restriction on how the planner can use the action.
 
-To make an action relevant for a goal of the form `(variable, arg, value)`, [HGNpyhop](https://github.com/ospur/hgn-pyhop) requires the action to be callable as `action_name(arg,value)`. Consider the following two cases:
+In HGNPyhop, to declare an action relevant for a goal of the form `(variable, arg, value)`, the action must be callable as `action_name(arg,value)`. Consider what this means for goals 1 and 2 in the previous section:
 
- - To make the `unload` action relevant for `('loc', container, location)`, we would need to rewrite it to be callable as `unload(state,container,location)`, and declare it relevant for `loc`. The rewrite would need to look like the following, where `is_a` would be a helper function for determining an object's type:
+ - To make `unload` relevant for goal 1, `('loc', container, location)`, we would need to rewrite it to be callable as `unload(state,container,location)`, and declare it relevant for `loc`. The rewrite would look like this:
 
         def unload(state, container, location):
             r = state.loc[container]
+            # 'is_a' needs to be a function that returns an object's type
             if is_a(r,'robot') and state.loc[r] == location:
                 state.loc[container] = location
                 state.cargo[r] = 'nil'
@@ -263,7 +263,7 @@ To make an action relevant for a goal of the form `(variable, arg, value)`, [HGN
 
         hgn_pyhop.declare_operators('loc', unload)
 
- - In contrast, to make `unload` relevant for `('cargo', robot, desired_cargo)`, we would need to rewrite it to be callable as `unload(robot, desired_cargo)`, and declare it relevant for `cargo`. The rewrite would need to look like this:
+ - To make `unload` relevant for goal 2, `('cargo', robot, desired_cargo)`, we would need to rewrite it to be callable as `unload(robot, desired_cargo)`, and declare it relevant for `cargo`. The rewrite would look like this:
 
         def unload(state, robot, desired_cargo):
             c = state.cargo[robot]
@@ -274,7 +274,7 @@ To make an action relevant for a goal of the form `(variable, arg, value)`, [HGN
 
         hgn_pyhop.declare_operators('cargo', unload)
  
-Both rewrites make the `unload` action harder to understand, and neither of them satisfies the requirement that in HGN planning algorithms such as GDP and Godel, `unload` must be relevant for *both* goals. To accomplish this in HGNpyhop, I think something like the following might work, though I haven't tested it to make sure:
+Both rewrites make the `unload` action harder to understand -- and neither of them makes `unload` relevant for *both* goals, as it would be in GDP and Godel. To accomplish this in HGNpyhop, I think something like the following might work, though I haven't tested it to make sure:
 
     def unload(state, arg1, arg2):
         if is_a(arg1,'container') and is_a(arg2,'loc'):
@@ -294,7 +294,10 @@ Both rewrites make the `unload` action harder to understand, and neither of them
     hgn_pyhop.declare_operators('loc', unload)
     hgn_pyhop.declare_operators('cargo', unload)
 
-Such a definition of the `unload` action is quite unintuitive. Furthermore, one can construct examples of other actions and goals, for which an `is_a` test on the arguments would not be sufficient to tell which piece of code to execute. I would not want to incorporate something like this into GTPyhop.
+This definition doesn't seem very intuitive. Furthermore, one can construct examples of other actions and goals for which an `is_a` test on the arguments would not be sufficient to tell which piece of code to execute. 
+
+To summarize: actions usually have multiple effects, and there are planning domains in which each of those effects might be a possible goal of using the action. In such cases, the HGN approach would cause problems.
+
 
 ---------
 
