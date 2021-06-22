@@ -201,8 +201,8 @@ To see why, let us rewrite the `unload` action in classical precondition-and-eff
 
 GDP and GoDel would consider such an action to be relevant for both of the following goals:
 
-> goal 1: reach a state `s` in which `loc[container] = location`;  \
-> goal 2: reach a state `s` in which `cargo[robot] = 'nil'`.
+ - goal 1: reach a state `s` in which `loc[container] = location`;
+ - goal 2: reach a state `s` in which `cargo[robot] = 'nil'`.
 
 That isn't feasible in GTPyhop, because the preconditions and effects of a GTPyhop action are not fixed in advance, but instead are computed using arbitrary Python code. The only way to tell what effects an action will have is to execute the code and see what state it produces. To find an action that is applicable in a state *s* and whose effects satisfy a goal *g*, we would need to do a backtracking search through many combinations of actions and parameter values, trying each one to see if executing it in *s* will produce a state that satisfies *g*. This would be unacceptably expensive. Thus when trying to accomplish a goal, GTPyhop doesn't look at actions, it only looks at goal methods.
 
