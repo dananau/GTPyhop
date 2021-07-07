@@ -659,9 +659,9 @@ def _m_verify_mg(state, method, multigoal, depth):
 # Applying actions, commands, and methods
 
 
-def _apply_action__and_proceed(state, task1, todo_list, plan, depth):
+def _apply_action_and_continue(state, task1, todo_list, plan, depth):
     """
-    _apply_action__and_proceed is called only when task1's name matches an
+    _apply_action_and_continue is called only when task1's name matches an
     action name. It applies the action by retrieving the action's function
     definition and calling it on the arguments, then calls seek_plan
     recursively on todo_list.
@@ -680,9 +680,9 @@ def _apply_action__and_proceed(state, task1, todo_list, plan, depth):
     return False
 
 
-# def _call_method__and_proceed(state, task1, todo_list, plan, depth):
+# def _call_method_and_continue(state, task1, todo_list, plan, depth):
 #     """
-#     _call_method__and_proceed is called only when task1's name matches a
+#     _call_method_and_continue is called only when task1's name matches a
 #     method name. To apply the method, it retrieves the function definition
 #     and calls it on the arguments to get additional todo_list items, then
 #     calls seek_plan recursively on [the additional items] + todo_list.
@@ -708,7 +708,7 @@ def _apply_action__and_proceed(state, task1, todo_list, plan, depth):
 #     return False
 
 
-def _refine_task__and_proceed(state, task1, todo_list, plan, depth):
+def _refine_task_and_continue(state, task1, todo_list, plan, depth):
     """
     If task1 is in the task-method dictionary, then iterate through the list
     of relevant methods to find one that's applicable, apply it to get
@@ -740,7 +740,7 @@ def _refine_task__and_proceed(state, task1, todo_list, plan, depth):
     return False
 
 
-def _refine_unigoal__and_proceed(state, goal1, todo_list, plan, depth):
+def _refine_unigoal_and_continue(state, goal1, todo_list, plan, depth):
     """
     If goal1 is in the unigoal-method dictionary, then iterate through the
     list of relevant methods to find one that's applicable, apply it to get
@@ -786,7 +786,7 @@ def _refine_unigoal__and_proceed(state, goal1, todo_list, plan, depth):
     return False
 
 
-def _refine_multigoal__and_proceed(state, goal1, todo_list, plan, depth):
+def _refine_multigoal_and_continue(state, goal1, todo_list, plan, depth):
     """
     If goal1 is a multigoal, then iterate through the list of multigoal
     methods to find one that's applicable, apply it to get additional
@@ -874,16 +874,16 @@ def seek_plan(state, todo_list, plan, depth):
     item1 = todo_list[0]
     ttype = get_type(item1)
     if ttype in {'Multigoal'}:
-        return _refine_multigoal__and_proceed(state, item1, todo_list[1:], plan, depth)
+        return _refine_multigoal_and_continue(state, item1, todo_list[1:], plan, depth)
     elif ttype in {'list','tuple'}:
         if item1[0] in current_domain._action_dict:
-            return _apply_action__and_proceed(state, item1, todo_list[1:], plan, depth)
+            return _apply_action_and_continue(state, item1, todo_list[1:], plan, depth)
         elif item1[0] in current_domain._task_method_dict:
-            return _refine_task__and_proceed(state, item1, todo_list[1:], plan, depth)
+            return _refine_task_and_continue(state, item1, todo_list[1:], plan, depth)
         elif item1[0] in current_domain._unigoal_method_dict:
-            return _refine_unigoal__and_proceed(state, item1, todo_list[1:], plan, depth)
+            return _refine_unigoal_and_continue(state, item1, todo_list[1:], plan, depth)
 #         elif item1[0] in current_domain._all_method_names:
-#             return _call_method__and_proceed(state, item1, todo_list[1:], plan, depth)            
+#             return _call_method_and_continue(state, item1, todo_list[1:], plan, depth)            
     raise Exception(    \
         f"depth {depth}: {item1} isn't an action, task, unigoal, or multigoal\n")
     return False
@@ -957,7 +957,7 @@ def run_lazy_lookahead(state, todo_list, max_tries=10):
                 
             if verbose >= 1:
                 print('RLL> Command:', [command_name] + list(action[1:]))
-            new_state = _apply_command__and_proceed(state, command_func, action[1:])
+            new_state = _apply_command_and_continue(state, command_func, action[1:])
             if new_state == False:
                 if verbose >= 1: 
                     print(f'RLL> WARNING: command {command_name} failed; will call find_plan.')
@@ -975,13 +975,13 @@ def run_lazy_lookahead(state, todo_list, max_tries=10):
     return state
 
 
-def _apply_command__and_proceed(state, command, args):
+def _apply_command_and_continue(state, command, args):
     """
-    _apply_command__and_proceed applies 'command' by retrieving its
+    _apply_command_and_continue applies 'command' by retrieving its
     function definition and calling it on the arguments.
     """
     if verbose >= 3:
-        print(f"_apply_command__and_proceed {command.__name__}, args = {args}")
+        print(f"_apply_command_and_continue {command.__name__}, args = {args}")
     next_state = command(state.copy(),*args)
     if next_state:
         if verbose >= 3:
