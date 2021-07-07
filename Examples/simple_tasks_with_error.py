@@ -1,8 +1,15 @@
 """
-An expanded version of the "travel from home to the park" example in
-my lectures, modified to show how an unexpected problem at acting time can
+An expanded version of the "travel from home to the park" example in my
+lectures, modified to show how an unexpected problem at acting time can
 cause an execution error if the methods are too brittle.
--- Dana Nau <nau@umd.edu>, July 6, 2021
+
+The following paper describes one of the possible ways to overcome this
+problem: 
+
+    Bansod, Nau, Patra and Roberts. Integrating Planning and Acting by Using
+    a Re-Entrant HTN Planner. ICAPS HPlan Workshop, 2021.
+
+-- Dana Nau <nau@umd.edu>, July 7, 2021
 """
 
 # kludge to make gtpyhop available regardless of whether the current directory

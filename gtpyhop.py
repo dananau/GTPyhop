@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause-Clear
 
 # GTPyhop, version 1.1
-# Author: Dana Nau <nau@umd.edu>, July 6, 2021
+# Author: Dana Nau <nau@umd.edu>, July 7, 2021
 
 """
 GTPyhop is an automated planning system that can plan for both tasks and
