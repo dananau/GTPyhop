@@ -7,20 +7,21 @@
 
 <hr>
 
-This document assumes you already have at least a little familarity with GTPyhop. You might want to read [[Nau21](#Nau21)] first.
+Before reading this document, you might want to read [[Nau21](#Nau21)] to get some familarity with GTPyhop.
 
 <hr>
 
 **Contents:**
 
  1. [States and actions](#States)
- 1. [Tasks and task methods](#Tasks)
- 1. [Goals and goal methods](#Goals)
- 1. [Other properties of goals and tasks](#Other)
- 1. [Comparison with GDP and GoDeL](#GDP)
- 1. [Comparison with HGNpyhop](#HGNpyhop)
- 1. [Backward compatibility with Pyhop](#Pyhop)
- 1. [References](#References)
+ 2. [Tasks and task methods](#Tasks)
+ 3. [Goals and goal methods](#Goals)
+ 4. [Other properties of goals and tasks](#Other)
+ 5. [Backward compatibility with Pyhop](#Pyhop)
+ 6. [Comparisons with other planners](#GDP)
+     6.1. [GDP and GoDeL](#GDP)
+     6.2. [HGNpyhop](#HGNpyhop)
+ 7. [References](#References)
 
 ## <span id="States">1. States and actions</span>
 
@@ -195,7 +196,29 @@ An obvious question is whether such checks are useful. They may be useful while 
 Depending on feedback from users, I'll consider whether to make `verify_goals = False` the default.
 
 
-## <span id="GDP">5. Comparison with GDP and GoDel</span>
+## <span id="Pyhop">5. Backward Compatibility with Pyhop</span>
+
+
+GTPyhop is mostly backward-compatible with Pyhop, but not completely so. Below is a list of the differences. To illustrate them, the [`pyhop_simple_travel_example`](Examples/pyhop_simple_travel_example) example domain is a near-verbatim adaptation of Pyhop's [simple travel example](https://bitbucket.org/dananau/pyhop/src/master/simple_travel_example.py).
+
+- Pyhop worked in both Python 2 and 3. GTPyhop requires Python 3.
+- GTPyhop requires a domain declaration before any actions and methods can be defined.
+- In Pyhop, `verbose` was a keyword argument having the default value 0. In GTPyhop, it is a global variable and its initial value is 1. 
+- GTPyhop uses different names for the following functions. For backward compatibility, you can still use the old Pyhop function names, but a message will ask you to use the new names in the future.
+
+    |     Pyhop |     GTPyhop |
+     --- | --- 
+    `pyhop.declare_methods` | `gtpyhop.declare_task_methods`*
+    `pyhop.declare_operators` | `gtpyhop.declare_actions`
+    `pyhop.print_operators` | `gtpyhop.print_actions`
+    `pyhop.pyhop` | `gtpyhop.find_plan`
+     
+    \* There is a minor difference between these two functions. In Pyhop, if `'task1'` is a task name and you call `pyhop.declare_methods('task1', …)` more than once, the only methods for `task1` will be the ones in the last call. In GTPyhop, you can call `gtpyhop.declare_task_methods('task1', …)` more than once to add additional methods for `task1`.  
+
+
+## <span id="Comparisons">6. Comparisons with other planners</span>
+
+### <span id="GDP">6.1. GDP and GoDel</span>
 
 In HGN planners such as GDP [[Shi12](#Shi12)] and GoDel [[Shi13](#Shi13)], an action *a* may be applied to a goal if the current state satisfies *a*'s preconditions, *a* has an effect that matches the goal, and none of *a*'s effects negate the goal. In contrast, GTPyhop does not apply actions directly to goals. GTPyhop will not put an action into the plan unless the action is in the agenda, either because it was there initially or because a method put it there.
 
@@ -251,7 +274,7 @@ If a domain definition includes such methods for all of the actions, then GTPyho
 
 
 
-## <span id="HGNpyhop">6. Comparison with HGNPyhop</span>
+### <span id="HGNpyhop">6.2. HGNPyhop</span>
 
 There is a fork of Pyhop called [HGNpyhop](https://github.com/ospur/hgn-pyhop) in which one may declare an action to be directly relevant for a goal. At first glance, this seems like a desirable feature, and I seriously considered adding it to GTPyhop -- but I ultimately decided against it, because it imposes significant restriction on how the planner can use the action.
 
@@ -309,28 +332,7 @@ In GTPyhop, we can overcome this problem by defining, for each effect *e* of *a*
 As an example of how to do this, see [Examples/logistics_goals/methods.py](Examples/logistics_goals/methods.py)
 
 
-
-## <span id="Pyhop">7. Backward Compatibility with Pyhop</span>
-
-
-GTPyhop is mostly backward-compatible with Pyhop, but not completely so. Below is a list of the differences. To illustrate them, the [`pyhop_simple_travel_example`](Examples/pyhop_simple_travel_example) example domain is a near-verbatim adaptation of Pyhop's [simple travel example](https://bitbucket.org/dananau/pyhop/src/master/simple_travel_example.py).
-
-- Pyhop worked in both Python 2 and 3. GTPyhop requires Python 3.
-- GTPyhop requires a domain declaration before any actions and methods can be defined.
-- In Pyhop, `verbose` was a keyword argument having the default value 0. In GTPyhop, it is a global variable and its initial value is 1. 
-- GTPyhop uses different names for the following functions. For backward compatibility, you can still use the old Pyhop function names, but a message will ask you to use the new names in the future.
-
-    |     Pyhop |     GTPyhop |
-     --- | --- 
-    `pyhop.declare_methods` | `gtpyhop.declare_task_methods`*
-    `pyhop.declare_operators` | `gtpyhop.declare_actions`
-    `pyhop.print_operators` | `gtpyhop.print_actions`
-    `pyhop.pyhop` | `gtpyhop.find_plan`
-     
-    \* There is a minor difference between these two functions. In Pyhop, if `'task1'` is a task name and you call `pyhop.declare_methods('task1', …)` more than once, the only methods for `task1` will be the ones in the last call. In GTPyhop, you can call `gtpyhop.declare_task_methods('task1', …)` more than once to add additional methods for `task1`.  
-
-
-## <span id="References">8. References</span>
+## <span id="References">7. References</span>
 
 <span id="Gha16">[Gha16]</span> M. Ghallab, D. S. Nau, and P. Traverso. [*Automated Planning and Acting*](http://www.laas.fr/planning). Cambridge University Press, Sept. 2016.
 
