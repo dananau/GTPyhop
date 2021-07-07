@@ -262,9 +262,6 @@ class Domain():
         
         # list of all methods for multigoals
         self._multigoal_method_list = []
-        
-        # the names of all the methods
-#         self._all_method_names = set()
 
     def __str__(self):
         return f"<Domain {self.__name__}>"
@@ -463,10 +460,8 @@ def declare_task_methods(task_name, *methods):
         # we don't want to add any methods that are already in it
         new_methods = [m for m in methods if m not in old_methods]
         current_domain._task_method_dict[task_name].extend(new_methods)
-#         current_domain._all_method_names.update({m.__name__ for m in new_methods})
     else:
         current_domain._task_method_dict.update({task_name:list(methods)})
-#         current_domain._all_method_names.update({m.__name__ for m in methods})
     return current_domain._task_method_dict
 
 
@@ -503,12 +498,10 @@ def declare_unigoal_methods(state_var_name, *methods):
         raise Exception(f"cannot declare methods until a domain has been created.")
     if state_var_name not in current_domain._unigoal_method_dict:
         current_domain._unigoal_method_dict.update({state_var_name:list(methods)})
-#         current_domain._all_method_names.update({m.__name__ for m in methods})
     else:
         old_methods = current_domain._unigoal_method_dict[state_var_name]
         new_methods = [m for m in methods if m not in old_methods]
         current_domain._unigoal_method_dict[state_var_name].extend(new_methods)
-#         current_domain._all_method_names.update({m.__name__ for m in new_methods})
     return current_domain._unigoal_method_dict    
 
 
@@ -535,7 +528,6 @@ def declare_multigoal_methods(*methods):
     new_mg_methods = [m for m in methods if m not in \
                       current_domain._multigoal_method_list]
     current_domain._multigoal_method_list.extend(new_mg_methods)
-#     current_domain._all_method_names.update({m.__name__ for m in new_mg_methods})
     return current_domain._multigoal_method_list    
 
     
@@ -678,34 +670,6 @@ def _apply_action_and_continue(state, task1, todo_list, plan, depth):
     if verbose >= 3:
         print('not applicable')
     return False
-
-
-# def _call_method_and_continue(state, task1, todo_list, plan, depth):
-#     """
-#     _call_method_and_continue is called only when task1's name matches a
-#     method name. To apply the method, it retrieves the function definition
-#     and calls it on the arguments to get additional todo_list items, then
-#     calls seek_plan recursively on [the additional items] + todo_list.
-#     """
-#     if verbose >= 3: 
-#         print(f'depth {depth} calling {method.__name__} directly: ', end='')
-#     
-#     method = eval(task1[0])     # get the method's function definition
-#     subtasks = method(state, *task1[1:])
-#     # Can't just say "if subtasks:", because that's wrong if subtasks == []
-#     if subtasks != False and subtasks != None:
-#         if verbose >= 3:
-#             print('applicable')
-#             print(f'depth {depth} subtasks: {subtasks}')
-#         result = seek_plan(state, subtasks+todo_list, plan, depth+1)
-#         if result != False and result != None:
-#             return result
-#     else:
-#         if verbose >= 3:
-#             print(f'not applicable')
-#     if verbose >= 3:
-#         print(f'depth {depth} method {task1[0]}{task1[1:]} failed')        
-#     return False
 
 
 def _refine_task_and_continue(state, task1, todo_list, plan, depth):
@@ -882,8 +846,6 @@ def seek_plan(state, todo_list, plan, depth):
             return _refine_task_and_continue(state, item1, todo_list[1:], plan, depth)
         elif item1[0] in current_domain._unigoal_method_dict:
             return _refine_unigoal_and_continue(state, item1, todo_list[1:], plan, depth)
-#         elif item1[0] in current_domain._all_method_names:
-#             return _call_method_and_continue(state, item1, todo_list[1:], plan, depth)            
     raise Exception(    \
         f"depth {depth}: {item1} isn't an action, task, unigoal, or multigoal\n")
     return False
