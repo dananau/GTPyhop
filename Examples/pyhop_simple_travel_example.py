@@ -1,21 +1,28 @@
 """
-The simple_travel_example.py file from the Pyhop distribution, with the
-following minor changes to make it compatible with GTPyhop:
-  - replace all references to pyhop with references to gtpyhop
-  - change 'verbose' from a keyword argument to a global variable
+The simple_travel_example.py file from the Pyhop distribution, with some
+minor changes to make it compatible with GTPyhop:
+  - declare a domain to hold the action and method definitions
+  - replace all references to pyhop with gtpyhop
+  - change 'verbose' to a global variable instead of a keyword argument
 
 To keep this file as close as possible to the Pyhop version, it doesn't use
 the test harness that's used with the other example files.
--- Dana Nau <nau@umd.edu>, June 6, 2021
+-- Dana Nau <nau@umd.edu>, July 6, 2021
 """
 
-# kludge to make gtpyhop available regardless of whether the current directory
-# is the Examples directory or its parent (where gtpyhop.py is located)
+# This change isn't for compatibility with GTPyhop, it's a kludge to make
+# gtpyhop.py available to Python regardless of what the current directory
+# is. We wouldn't need it if pyhop_simple_travel_example.py and gtpyhop.py
+# were in the same directory.
 #
 import sys
 sys.path.append('../')
 import gtpyhop
 
+
+# declare a domain to hold the action and method definitions
+#
+gtpyhop.Domain('pyhop_simple_travel_example')
 
 def taxi_rate(dist):
     return (1.5 + 0.5 * dist)

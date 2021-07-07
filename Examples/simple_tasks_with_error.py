@@ -2,7 +2,7 @@
 An expanded version of the "travel from home to the park" example in
 my lectures, modified to show how an unexpected problem at acting time can
 cause an execution error if the methods are too brittle.
--- Dana Nau <nau@umd.edu>, June 6, 2021
+-- Dana Nau <nau@umd.edu>, July 6, 2021
 """
 
 # kludge to make gtpyhop available regardless of whether the current directory
@@ -13,6 +13,7 @@ sys.path.append('../')
 import gtpyhop
 
 import random
+import test_harness as th   # code for use in paging and debugging
 
 
 # This avoids hard-coding the domain name, making the code more portable
@@ -199,9 +200,12 @@ print('-----------------------------------------------------------------------')
 print(f"Created the domain '{domain_name}'. To run the examples, type this:")
 print(f"{domain_name}.main()")
 
-def main():
-    # Code for use in paging and debugging
-    from test_harness import check_result, pause, set_trace
+def main(do_pauses=True):
+    """
+    Run various examples.
+    main() will pause occasionally to let you examine the output.
+    main(False) will run straight through to the end, without stopping.
+    """
     
     # If we've changed to some other domain, this will change us back.
     gtpyhop.current_domain = the_domain
@@ -209,11 +213,11 @@ def main():
 
     state0a.display(heading='\nInitial state')
 
-    pause()
+    th.pause(do_pauses)
     print("Use run_lazy_lookahead to get Alice to the park.\n")
     gtpyhop.run_lazy_lookahead(state0a,[('travel','alice','park')])
     print('')
-    pause()
+    th.pause(do_pauses)
 
     print("""
 # Next is a demonstration of what can happen if the HTN methods are too
@@ -228,10 +232,10 @@ def main():
     state0b.display(heading='The initial state is')
 
     print('Next, the call to run_lazy_lookahead ...')
-    pause()
+    th.pause(do_pauses)
 
     gtpyhop.run_lazy_lookahead(state0b,[('travel','alice','park')])
-    pause()
+    th.pause(do_pauses)
 
     print("No more examples")
 

@@ -1,7 +1,7 @@
 """
 An expanded version of the "travel from home to the park" example in
 my lectures, modified to use goals instead of tasks.
--- Dana Nau <nau@umd.edu>, June 6, 2021
+-- Dana Nau <nau@umd.edu>, July 6, 2021
 """
 
 # kludge to make gtpyhop available regardless of whether the current directory
@@ -12,6 +12,7 @@ sys.path.append('../')
 import gtpyhop
 
 import random
+import test_harness as th   # code for use in paging and debugging
 
 
 # This avoids hard-coding the domain name, making the code more portable
@@ -204,9 +205,12 @@ print('-----------------------------------------------------------------------')
 print(f"Created the domain '{domain_name}'. To run the examples, type this:")
 print(f"{domain_name}.main()")
 
-def main():
-    # Code for use in paging and debugging
-    from test_harness import check_result, pause, set_trace
+def main(do_pauses=True):
+    """
+    Run various examples.
+    main() will pause occasionally to let you examine the output.
+    main(False) will run straight through to the end, without stopping.
+    """
     
     # If we've changed to some other domain, this will change us back.
     gtpyhop.current_domain = the_domain
@@ -219,7 +223,7 @@ def main():
     print("""
 Next, several planning problems using the above domain and initial state.
 """)
-    pause()
+    th.pause(do_pauses)
     
     print("""
 Below, we give find_plan the goal of having alice be at the park.
@@ -232,14 +236,14 @@ We do it several times with different values for 'verbose'.
     print("If verbose=0, the planner returns the solution but prints nothing:")
     gtpyhop.verbose = 0
     result = gtpyhop.find_plan(state1,[('loc','alice','park')])
-    check_result(result,expected)
+    th.check_result(result,expected)
 
     print("""If verbose=1, then in addition to returning the solution, the planner prints
 both the problem and the solution"
 """)
     gtpyhop.verbose = 1
     result = gtpyhop.find_plan(state1,[('loc','alice','park')])
-    check_result(result,expected)
+    th.check_result(result,expected)
 
     print("""If verbose=2, the planner also prints a note at each recursive call.  Below,
 _verify_g is a task used by the planner to check whether a method has
@@ -247,17 +251,17 @@ achieved its goal.
 """)
     gtpyhop.verbose = 2
     result = gtpyhop.find_plan(state1,[('loc','alice','park')])
-    check_result(result,expected)
-    pause()
+    th.check_result(result,expected)
+    th.pause(do_pauses)
 
     print("""
 If verbose=3, the planner prints even more information. 
 """)
     gtpyhop.verbose = 3
     result = gtpyhop.find_plan(state1,[('loc','alice','park')])
-    check_result(result,expected)
+    th.check_result(result,expected)
 
-    pause()
+    th.pause(do_pauses)
     print("""
 Next, we give find_plan a sequence of two goals: first for Alice to be at the
 park, then for Bob to be at the park. Since this is a sequence, it doesn't
@@ -267,9 +271,9 @@ matter whether they're both at the park at the same time.
     gtpyhop.verbose = 2
     plan = gtpyhop.find_plan(state1,[('loc','alice','park'),('loc','bob','park')])
 
-    check_result(plan,[('call_taxi', 'alice', 'home_a'), ('ride_taxi', 'alice', 'park'), ('pay_driver', 'alice', 'park'), ('walk', 'bob', 'home_b', 'park')])
+    th.check_result(plan,[('call_taxi', 'alice', 'home_a'), ('ride_taxi', 'alice', 'park'), ('pay_driver', 'alice', 'park'), ('walk', 'bob', 'home_b', 'park')])
 
-    pause()
+    th.pause(do_pauses)
 
 
     state1.display(heading='\nInitial state')
@@ -291,26 +295,26 @@ Next, we'll call find_plan on goal3, with verbose=2. In the printout,
 _verify_mg is a task used by the planner to check whether a multigoal
 method has achieved all of the values specified in the multigoal.
 """)
-    pause()
+    th.pause(do_pauses)
     
     gtpyhop.verbose = 2
     plan = gtpyhop.find_plan(state1,[goal3])
-    check_result(plan,[('call_taxi', 'alice', 'home_a'), ('ride_taxi', 'alice', 'park'), ('pay_driver', 'alice', 'park'), ('walk', 'bob', 'home_b', 'park')])
+    th.check_result(plan,[('call_taxi', 'alice', 'home_a'), ('ride_taxi', 'alice', 'park'), ('pay_driver', 'alice', 'park'), ('walk', 'bob', 'home_b', 'park')])
 
-    pause()
+    th.pause(do_pauses)
     print('\nCall run_lazy_lookahead with verbose=1:\n')
 
     gtpyhop.verbose = 1
     new_state = gtpyhop.run_lazy_lookahead(state1,[('loc','alice','park')])
     print('')
     
-    pause()
+    th.pause(do_pauses)
     
     print('\nAlice is now at the park, so the planner will return an empty plan:\n')
 
     gtpyhop.verbose = 1
     plan = gtpyhop.find_plan(new_state,[('loc','alice','park')])
-    check_result(plan,[])
+    th.check_result(plan,[])
 
     print("No more examples")
 

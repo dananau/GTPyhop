@@ -1,6 +1,21 @@
 """
-Generic initialization file for a GTPyhop example domain
--- Dana Nau <nau@umd.edu>, June 6, 2021
+The blocks_goal_splitting domain illustrates how to achieve blocks-world
+multigoals using GTPyhop's built-in m_split_multigoal method, which splits a
+multigoal into a list of unigoals and tries to achieve them sequentially.
+Due to deleted-condition interactions (in which achieving a later unigoal
+undoes a previously-achieved unigoal), this usually won't produce a state in
+which the entire multigoal has been achieved. If repeated sufficiently many
+times, it will eventually produce such a state, but it may take several
+tries, thus producing solution plans that are much longer than optimal.
+
+This would work much better if GTPyhop had an intelligent way to choose an
+order in which to achieve the unigoals. To accomplish that, we would need
+either to write a domain-specific multigoal method and use it instead of
+m_split_multigoals (as in the blocks_hybrid, blocks_tasks, and blocks_goals
+domains), or to modify m_split_multigoals to use a heuristic function to
+reorder its list of unigoals.
+
+-- Dana Nau <nau@umd.edu>, July 6, 2021
 """
 
 # kludge to make gtpyhop available regardless of whether the current directory
@@ -10,30 +25,4 @@ import sys
 sys.path.append('../')
 import gtpyhop
 
-# This avoids hard-coding the domain name, making the code more portable
-domain_name = __package__
-the_domain = gtpyhop.Domain(domain_name)
-
-from .methods import *
-from .actions import *
 from .examples import *
-
-def main():
-    # If we've changed to some other domain, this will change us back.
-    print(f"Changing current domain to {domain_name}, if it isn't that already.")
-    gtpyhop.current_domain = the_domain
-    run_examples()      # defined in the .examples file
-
-print('-----------------------------------------------------------------------')
-print(f"Created '{gtpyhop.current_domain}'. To run the examples, type this:")
-print(f'{domain_name}.main()')
-
-
-# It's tempting to make the following call to main() unconditional, to run the
-# examples without making the user type an extra command. But if we do this
-# and an error occurs while main() is executing, we get a situation in which
-# the actions, methods, and examples files have been imported but the module
-# hasn't been - which causes problems if we try to import the module again.
-
-if __name__=="__main__":
-    main()

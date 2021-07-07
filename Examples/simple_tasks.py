@@ -1,7 +1,7 @@
 """
 An expanded version of the "travel from home to the park" example in
 my lectures.
--- Dana Nau <nau@umd.edu>, June 6, 2021
+-- Dana Nau <nau@umd.edu>, July 6, 2021
 """
 
 # kludge to make gtpyhop available regardless of whether the current directory
@@ -12,6 +12,7 @@ sys.path.append('../')
 import gtpyhop
 
 import random
+import test_harness as th   # code for use in paging and debugging
 
 
 # This avoids hard-coding the domain name, making the code more portable
@@ -185,10 +186,13 @@ print('-----------------------------------------------------------------------')
 print(f"Created the domain '{domain_name}'. To run the examples, type this:")
 print(f"{domain_name}.main()")
 
-def main():
-    # Code for use in paging and debugging
-    from test_harness import check_result, pause, set_trace
-    
+def main(do_pauses=True):
+    """
+    Run various examples.
+    main() will pause occasionally to let you examine the output.
+    main(False) will run straight through to the end, without stopping.
+    """
+
     # If we've changed to some other domain, this will change us back.
     gtpyhop.current_domain = the_domain
     gtpyhop.print_domain()
@@ -197,7 +201,7 @@ def main():
 
     state1.display(heading='\nInitial state is')
 
-    pause()
+    th.pause(do_pauses)
     print("""
 Use find_plan to plan how to get Alice from home to the park.
 We'll do it several times with different values for 'verbose'.
@@ -209,34 +213,34 @@ We'll do it several times with different values for 'verbose'.
     print("-- If verbose=0, the planner will return the solution but print nothing.")
     gtpyhop.verbose = 0
     result = gtpyhop.find_plan(state1,[('travel','alice','park')])
-    check_result(result,expected)
+    th.check_result(result,expected)
 
     print("-- If verbose=1, the planner will print the problem and solution,")
     print("-- and then return the solution.\n")
     gtpyhop.verbose = 1
     result = gtpyhop.find_plan(state1,[('travel','alice','park')])
-    check_result(result,expected)
+    th.check_result(result,expected)
 
     print("-- If verbose=2, the planner will print the problem, a note at each")
     print("-- recursive call, and the solution. Then it will return the solution.\n")
     gtpyhop.verbose = 2
     result = gtpyhop.find_plan(state1,[('travel','alice','park')])
-    check_result(result,expected)
-    pause()
+    th.check_result(result,expected)
+    th.pause(do_pauses)
 
     print("-- If verbose=3, the planner will print even more information.\n")
     gtpyhop.verbose = 3
     result = gtpyhop.find_plan(state1,[('travel','alice','park')])
-    check_result(result,expected)
+    th.check_result(result,expected)
 
-    pause()
+    th.pause(do_pauses)
     print("""
 Find a plan that will first get Alice to the park, then get Bob to the park.
 """)
     gtpyhop.verbose = 2
     plan = gtpyhop.find_plan(state1,[('travel','alice','park'),('travel','bob','park')])
 
-    check_result(plan,[('call_taxi', 'alice', 'home_a'), ('ride_taxi', 'alice', 'park'), ('pay_driver', 'alice', 'park'), ('walk', 'bob', 'home_b', 'park')])
+    th.check_result(plan,[('call_taxi', 'alice', 'home_a'), ('ride_taxi', 'alice', 'park'), ('pay_driver', 'alice', 'park'), ('walk', 'bob', 'home_b', 'park')])
 
 
     print("""
@@ -245,19 +249,19 @@ Pr = 1/2, the taxi won't arrive. In this case, run_lazy_lookahead will call
 find_plan again, and find_plan will return the same plan as before. This will
 happen repeatedly until either the taxi arrives or run_lazy_lookahead decides
 it has tried too many times.""")
-    pause()
+    th.pause(do_pauses)
 
     gtpyhop.verbose = 1
     new_state = gtpyhop.run_lazy_lookahead(state1,[('travel','alice','park')])
 
-    pause()
+    th.pause(do_pauses)
 
     print('')
     print('If run_lazy_lookahead succeeded, then Alice is now at the park,')
     print('so the planner will return an empty plan:\n')
 
     plan = gtpyhop.find_plan(new_state,[('travel','alice','park')])
-    check_result(plan,[])
+    th.check_result(plan,[])
 
     print("No more examples")
 

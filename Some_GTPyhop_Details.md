@@ -1,10 +1,15 @@
 
-# Remarks about HGN planning in GTPyhop
+# Some GTPyhop Details
 
-> **Dana Nau**<br>
-> University of Maryland  <br>
+> **Dana S. Nau**  
+> University of Maryland  
 > June 22, 2021
 
+<hr>
+
+This document assumes you already have at least a little familarity with GTPyhop. You might want to read [^0] first.
+
+<hr>
 
 **Contents:**
 
@@ -14,6 +19,7 @@
  1. [Other properties of goals and tasks](#Other)
  1. [Comparison with GDP and GoDeL](#GDP)
  1. [Comparison with HGNpyhop](#HGNpyhop)
+ 1. [Backward compatibility with Pyhop](#Pyhop)
  1. [References](#References)
 
 ## <span id="States">1. States and actions</span>
@@ -39,7 +45,7 @@ This specifies that
 
 Note that each state variable has exactly one argument, e.g., `'alice'` or `'taxi1'`. However, the argument may be any hashable Python object, e.g., `'alice'` or the tuple  `('station','home')`, but not the list `['station','home']`.
 
-Although a `State` is object is used mainly to represent a state of the world, it can also be used for other collections of variables. For example, in the [Examples/simple_goals.py](Examples/simple_goals.py) file, the `State` object named `rigid` contains some "rigid relations", i.e., properties that are true in every state of the world.
+Although a `State` is object is used mainly to represent a state of the world, it can also be used for other collections of variables. For example, in [Examples/simple_tasks.py](Examples/simple_tasks.py) and [Examples/simple_goals.py](Examples/simple_goals.py), the `State` object named `rigid` contains some "rigid" properties that are true in every state of the world.
     
 
 ### Actions
@@ -54,11 +60,11 @@ Actions in GTPyhop are written in much the same way as in Pyhop. For example, he
 
     gtpyhop.declare_actions(unload)
 
-In Pyhop it would be written the same way, except for two minor differences:
+In Pyhop there would be two minor differences:
 
-- If an action is inapplicable (i.e., if the `if` test fails in the above example), Pyhop requires it to return `False`. In GTPyhop, it may either return `False` or (as above) not return a value.
+- If an action is inapplicable (i.e., if the `if` test fails in the above example), Pyhop would require it to return `False`. In GTPyhop, it may either return `False` or (as above) not return a value.
 
- - The last line refers to `gtpyhop.declare_actions` rather than `pyhop.declare_actions`.
+ - The last line would begin with `pyhop` rather than `gtpyhop`.
  
 
 ## <span id="Tasks">2. Tasks and task methods</span>
@@ -81,12 +87,12 @@ defines a task method called `m_unload_container` and tells GTPyhop to consider 
 
     ('unload_container' container location)
 
-The method definition is the same as it would be in Pyhop, except for two minor differences:
+In Pyhop there would be two minor differences:
 
 - If a method is inapplicable (i.e., if the `if` test fails in the above example), Pyhop requires it to return `False`. In GTPyhop, it may either return `False` or (as above) not return a value.
 
-- The last line of the definition refers to `gtpyhop:declare_task_methods` rather than `pyhop:declare_methods`.
-
+ - The last line would begin with `pyhop` rather than `gtpyhop`.
+ 
 
 ## <span id="Goals">3. Goals and goal methods</span>
 
@@ -168,13 +174,13 @@ For the above method to work, we would need to define a unigoal method, e.g., `m
 
 ## <span id="Other">4. Other properties of goals and tasks</span>
 
-### Hybrid goal- and task-planning
+### Goal Task Network (GTN) Planning
 
 It is easy to have both goal methods and task methods in the same planning domain. Any method, regardless of whether it is a task method or goal method, can return a list that contains actions, subtasks, and subgoals. For example, in the `m_move_to_loc2` multigoal-method defined earlier, we could replace the last line with
 
     return [('move_container', c, mg.loc[c]) for c in containers_to_move]
 
-where `move_container` is a task for which we have declared one or more task methods.
+where `move_container` is a task for which we have declared one or more task methods. 
 
 ### Checking whether a method has achieved a goal
 
@@ -191,9 +197,9 @@ Depending on feedback from users, I'll consider whether to make `verify_goals = 
 
 ## <span id="GDP">5. Comparison with GDP and GoDel</span>
 
-In HGN planners such as GDP [1] and GoDel [2], an action *a* may be applied to a goal if the current state satisfies *a*'s preconditions, *a* has an effect that matches the goal, and none of *a*'s effects negate the goal. In contrast, GTPyhop does not apply actions directly to goals. GTPyhop will not put an action into the plan unless the action is in the agenda, either because it was there initially or because a method put it there.
+In HGN planners such as GDP [^1] and GoDel [^2], an action *a* may be applied to a goal if the current state satisfies *a*'s preconditions, *a* has an effect that matches the goal, and none of *a*'s effects negate the goal. In contrast, GTPyhop does not apply actions directly to goals. GTPyhop will not put an action into the plan unless the action is in the agenda, either because it was there initially or because a method put it there.
 
-To see why, let us rewrite the `unload` action in classical precondition-and-effects notation [3]:
+To see why, let us rewrite the `unload` action in classical precondition-and-effects notation [^3]:
 
     unload(robot, container, location):
         precond: loc[robot] = location, loc[container] = robot
@@ -274,7 +280,7 @@ In HGNPyhop, to declare an action relevant for a goal of the form `(variable, ar
 
         hgn_pyhop.declare_operators('cargo', unload)
  
-Both rewrites make the `unload` action harder to understand -- and neither of them makes `unload` relevant for *both* goals, as it would be in GDP and Godel. To accomplish this in HGNpyhop, I think something like the following might work, though I haven't tested it to make sure:
+Both rewrites make the `unload` action harder to understand -- and neither of them makes `unload` relevant for both goals, as it would be in GDP and Godel. To accomplish this in HGNpyhop, I think something like the following *might* work, though I haven't tested it to make sure:
 
     def unload(state, arg1, arg2):
         if is_a(arg1,'container') and is_a(arg2,'loc'):
@@ -296,15 +302,40 @@ Both rewrites make the `unload` action harder to understand -- and neither of th
 
 This definition doesn't seem very intuitive. Furthermore, one can construct examples of other actions and goals for which an `is_a` test on the arguments would not be sufficient to tell which piece of code to execute. 
 
-To summarize: actions usually have multiple effects, and there are planning domains in which each of those effects might be a possible goal of using the action. In such cases, the HGN approach would cause problems.
+To summarize: it is easy to tell HGNpyhop that an action *a* is relevant for achieving a particular one of its effects, but this precludes us from telling HGNpyhop that *a* is relevant for achieving any of its other effects. If those effects are goals that we want to achieve, HGNpyhop will be unable to use *a* to achieve them.
+
+In GTPyhop, we can overcome this problem by defining, for each effect *e* of *a*, a unigoal_method for *e* that returns the list [*a*]. This is possible because GTPyhop allows actions to appear in the list of items returned by a method -- which is not allowed in HGNpyhop, nor in HGN planners such as GDP and GoDel.
+
+As an example of how to do this, see [Examples/logistics_goals/methods.py](Examples/logistics_goals/methods.py)
 
 
----------
 
-## <span id="References">7. References</span>
+## <span id="Pyhop">7. Backward Compatibility with Pyhop</span>
 
-[1] V. Shivashankar, U. Kuter, D. S. Nau, and R. Alford. [A hierarchical goal-based formalism and algorithm for single-agent planning](https://www.cs.umd.edu/~nau/papers/shivashankar2012hierarchical.pdf). In Proc. International Conference on Autonomous Agents and Multiagent Systems (AAMAS), 2012.
 
-[2] V. Shivashankar, R. Alford, U. Kuter, and D. Nau. [The GoDeL planning system: A more perfect union of domain-independent and hierarchical planning](https://www.cs.umd.edu/~nau/papers/shivashankar2013godel.pdf). In Proc. International Joint Conference on Artificial Intelligence (IJCAI), pp. 2380–2386, 2013.
+GTPyhop is mostly backward-compatible with Pyhop, but not completely so. Below is a list of the differences. To illustrate them, the [`pyhop_simple_travel_example`](Examples/pyhop_simple_travel_example) example domain is a near-verbatim adaptation of Pyhop's [simple travel example](https://bitbucket.org/dananau/pyhop/src/master/simple_travel_example.py).
 
-[3] M. Ghallab, D. S. Nau, and P. Traverso. [*Automated Planning and Acting*](http://www.laas.fr/planning). Cambridge University Press, Sept. 2016.
+- Pyhop worked in both Python 2 and 3. GTPyhop requires Python 3.
+- GTPyhop requires a domain declaration before any actions and methods can be defined.
+- In Pyhop, `verbose` was a keyword argument having the default value 0. In GTPyhop, it is a global variable and its initial value is 1. 
+- GTPyhop uses different names for the following functions. For backward compatibility, you can still use the old Pyhop function names, but a message will ask you to use the new names in the future.
+
+    |     Pyhop |     GTPyhop |
+     --- | --- 
+    `pyhop.declare_methods` | `gtpyhop.declare_task_methods`*
+    `pyhop.declare_operators` | `gtpyhop.declare_actions`
+    `pyhop.print_operators` | `gtpyhop.print_actions`
+    `pyhop.pyhop` | `gtpyhop.find_plan`
+     
+    \* There is a minor difference between these two functions. In Pyhop, if `'task1'` is a task name and you call `pyhop.declare_methods('task1', …)` more than once, the only methods for `task1` will be the ones in the last call. In GTPyhop, you can call `gtpyhop.declare_task_methods('task1', …)` more than once to add additional methods for `task1`.  
+
+
+## <span id="References">8. References</span>
+
+[^0]: Nau, Patra, Roberts, Bansod and Li. [GTPyhop: A Hierarchical Goal+Task Planner Implemented in Python](http://www.cs.umd.edu/users/nau/papers/nau2021gtpyhop.pdf). ICAPS HPlan Workshop, 2021. 
+
+[^1]: V. Shivashankar, U. Kuter, D. S. Nau, and R. Alford. [A hierarchical goal-based formalism and algorithm for single-agent planning](https://www.cs.umd.edu/~nau/papers/shivashankar2012hierarchical.pdf). In Proc. International Conference on Autonomous Agents and Multiagent Systems (AAMAS), 2012.
+
+[^2]: V. Shivashankar, R. Alford, U. Kuter, and D. Nau. [The GoDeL planning system: A more perfect union of domain-independent and hierarchical planning](https://www.cs.umd.edu/~nau/papers/shivashankar2013godel.pdf). In Proc. International Joint Conference on Artificial Intelligence (IJCAI), pp. 2380–2386, 2013.
+
+[^3]: M. Ghallab, D. S. Nau, and P. Traverso. [*Automated Planning and Acting*](http://www.laas.fr/planning). Cambridge University Press, Sept. 2016.

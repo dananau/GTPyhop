@@ -1,21 +1,41 @@
 """
 Examples file for blocks_goal_splitting.
--- Dana Nau <nau@umd.edu>, June 6, 2021
+-- Dana Nau <nau@umd.edu>, July 6, 2021
 """
 
-# For use in debugging:
+# Uncomment this to use it in debugging:
 # from IPython import embed
 # from IPython.terminal.debugger import set_trace
 
 import gtpyhop
+import test_harness as th   # code for use in paging and debugging
 
-# Code for use in paging and debugging
-from test_harness import check_result, pause, set_trace
+
+# We must declare the current domain before importing methods and actions.
+# To make the code more portable, we don't hard the domain name, but instead
+# infer it from the package name.
+the_domain = gtpyhop.Domain(__package__)
+
+from .methods import *
+from .actions import *
+
+print('-----------------------------------------------------------------------')
+print(f"Created '{gtpyhop.current_domain}'. To run the examples, type this:")
+print(f'{the_domain.__name__}.main()')
 
 
 #############     beginning of tests     ################
 
-def run_examples():
+def main(do_pauses=True):
+    """
+    Run various examples.
+    main() will pause occasionally to let you examine the output.
+    main(False) will run straight through to the end, without stopping.
+    """
+
+    # If we've changed to some other domain, this will change us back.
+    print(f"Changing current domain to {the_domain}, if it isn't that already.")
+    gtpyhop.current_domain = the_domain
 
     gtpyhop.print_domain()
 
@@ -44,7 +64,7 @@ However, goal1a also specifies that we want a on the table.
     ### goal1b omits some of the conditions of goal1a,
     ### but those conditions will need to be achieved anyway
 
-    pause()
+    th.pause(do_pauses)
 
     print("""
 Run GTPyhop with goal1a and goal1b, starting in state1. Both should produce the
@@ -61,11 +81,11 @@ how to choose the best order for achieving the goals.
     expected = [('unstack', 'a', 'b'), ('putdown', 'a'), ('pickup', 'c'), ('stack', 'c', 'b'), ('unstack', 'c', 'b'), ('putdown', 'c'), ('pickup', 'b'), ('stack', 'b', 'a'), ('pickup', 'c'), ('stack', 'c', 'b')]
 
     plan1 = gtpyhop.find_plan(state1,[goal1a])
-    check_result(plan1,expected)
+    th.check_result(plan1,expected)
 
     plan2 = gtpyhop.find_plan(state1,[goal1b])
-    check_result(plan2,expected)
-    pause()
+    th.check_result(plan2,expected)
+    th.pause(do_pauses)
 
 
     print("""
@@ -98,11 +118,11 @@ of the conditions in goal2a, but both goals should produce the same plan.
     expected = [('unstack', 'a', 'c'), ('putdown', 'a'), ('unstack', 'b', 'd'), ('stack', 'b', 'c'), ('pickup', 'a'), ('stack', 'a', 'd')] 
 
     plan1 = gtpyhop.find_plan(state2,[goal2a])
-    check_result(plan1,expected)
+    th.check_result(plan1,expected)
 
     plan2 = gtpyhop.find_plan(state2,[goal2b])
-    check_result(plan2,expected)
-    pause()
+    th.check_result(plan2,expected)
+    th.pause(do_pauses)
 
 
     # In some Python installations, the default recursion limit is too small to
@@ -134,7 +154,7 @@ Define problem bw_large_d from the SHOP distribution.
     goal3.display()
     
     expected = [('unstack', 1, 12), ('putdown', 1), ('unstack', 12, 13), ('putdown', 12), ('unstack', 11, 10), ('putdown', 11), ('unstack', 10, 5), ('putdown', 10), ('unstack', 5, 4), ('putdown', 5), ('unstack', 4, 14), ('putdown', 4), ('unstack', 14, 15), ('putdown', 14), ('pickup', 15), ('stack', 15, 13), ('unstack', 9, 8), ('putdown', 9), ('unstack', 15, 13), ('putdown', 15), ('pickup', 13), ('stack', 13, 8), ('unstack', 13, 8), ('putdown', 13), ('unstack', 8, 7), ('stack', 8, 9), ('unstack', 8, 9), ('putdown', 8), ('pickup', 9), ('stack', 9, 4), ('unstack', 19, 18), ('putdown', 19), ('unstack', 18, 17), ('putdown', 18), ('unstack', 17, 16), ('putdown', 17), ('unstack', 16, 3), ('putdown', 16), ('unstack', 3, 2), ('putdown', 3), ('pickup', 12), ('stack', 12, 2), ('unstack', 12, 2), ('putdown', 12), ('pickup', 2), ('stack', 2, 3), ('unstack', 2, 3), ('putdown', 2), ('pickup', 3), ('stack', 3, 16), ('unstack', 3, 16), ('putdown', 3), ('pickup', 16), ('stack', 16, 11), ('unstack', 16, 11), ('putdown', 16), ('pickup', 11), ('stack', 11, 7), ('pickup', 15), ('stack', 15, 13), ('unstack', 15, 13), ('putdown', 15), ('pickup', 13), ('stack', 13, 8), ('unstack', 13, 8), ('putdown', 13), ('pickup', 8), ('stack', 8, 9), ('pickup', 12), ('stack', 12, 2), ('unstack', 12, 2), ('putdown', 12), ('pickup', 2), ('stack', 2, 3), ('unstack', 2, 3), ('putdown', 2), ('pickup', 3), ('stack', 3, 16), ('unstack', 3, 16), ('putdown', 3), ('pickup', 16), ('stack', 16, 11), ('pickup', 15), ('stack', 15, 13), ('unstack', 15, 13), ('putdown', 15), ('pickup', 13), ('stack', 13, 8), ('pickup', 12), ('stack', 12, 2), ('unstack', 12, 2), ('putdown', 12), ('pickup', 2), ('stack', 2, 3), ('unstack', 2, 3), ('putdown', 2), ('pickup', 3), ('stack', 3, 16), ('pickup', 15), ('stack', 15, 13), ('pickup', 12), ('stack', 12, 2), ('unstack', 12, 2), ('putdown', 12), ('pickup', 2), ('stack', 2, 3), ('pickup', 12), ('stack', 12, 2)]
-    pause()
+    th.pause(do_pauses)
 
 
     print("""
@@ -143,8 +163,8 @@ doesn't know how to choose the best order for achieving the goals.
 """)
 
     plan = gtpyhop.find_plan(state3,[goal3])
-    check_result(plan,expected)
-    pause()
+    th.check_result(plan,expected)
+    th.pause(do_pauses)
 
 
     print("""
@@ -156,17 +176,16 @@ Call run_lazy_lookahead on the same problem:
     print("The goal should now be satisfied, so the planner should return an empty plan:\n")
 
     plan = gtpyhop.find_plan(new_state, [goal3])
-    check_result(plan,[])
+    th.check_result(plan,[])
 
     print("No more examples")
 
-###############################################################################
-# It's tempting to make the following call unconditional, to run the examples
-# without making the user type an extra command. But if we do this and an
-# error occurs during execution of main(), we get a situation in which the
-# actions and methods files have been imported but the current file hasn't
-# been -- which causes problems if we try to import the current file again.
-###############################################################################
+
+# It's tempting to make the following call to main() unconditional, to run the
+# examples without making the user type an extra command. But if we do this
+# and an error occurs while main() is executing, we get a situation in which
+# the actions, methods, and examples files have been imported but the module
+# hasn't been - which causes problems if we try to import the module again.
 
 if __name__=="__main__":
     main()

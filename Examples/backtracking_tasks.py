@@ -1,6 +1,6 @@
 """
 Some examples that show GTPyhop backtracking through several methods and tasks.
--- Dana Nau <nau@umd.edu>, June 6, 2021
+-- Dana Nau <nau@umd.edu>, July 6, 2021
 """
 
 import sys
@@ -11,6 +11,8 @@ import sys
 import sys
 sys.path.append('../')
 import gtpyhop
+
+import test_harness as th   # code for use in paging and debugging
 
 # This avoids hard-coding the domain name, making the code more portable
 domain_name = __name__
@@ -77,10 +79,13 @@ print('-----------------------------------------------------------------------')
 print(f"Created the domain '{domain_name}'. To run the examples, type this:")
 print(f"{domain_name}.main()")
 
-def main():
-    # Code for use in paging and debugging
-    from test_harness import check_result, pause, set_trace
-    
+def main(do_pauses=True):
+    """
+    Run various examples.
+    main() will pause occasionally to let you examine the output.
+    main(False) will run straight through to the end, without stopping.
+    """
+
     # If we've changed to some other domain, this will change us back.
     gtpyhop.current_domain = the_domain
     gtpyhop.print_domain()
@@ -95,32 +100,32 @@ def main():
 
     print("Next are some example problems with verbose=3 in order to see the backtracking.\n")
     gtpyhop.verbose = 3
-    pause()
+    th.pause(do_pauses)
     
     print("""Below, seek_plan backtracks once to use a different method for 'put_it'.
 """)
 
     # The comma after each task name is to make Python parse it as a tuple, not an atom
     result = gtpyhop.find_plan(state0,[('put_it',),('need0',)])
-    check_result(result,expect0)
-    pause()
+    th.check_result(result,expect0)
+    th.pause(do_pauses)
 
     print("""The backtracking in this example is the same as in the first one.
 """)
     result = gtpyhop.find_plan(state0,[('put_it',),('need01',)])
-    check_result(result,expect0)
-    pause()
+    th.check_result(result,expect0)
+    th.pause(do_pauses)
 
     print("""Below, seek_plan backtracks to use a different method for 'put_it',
 and later it backtracks to use a different method for 'need10'.
 """)    
     result = gtpyhop.find_plan(state0,[('put_it',),('need10',)])
-    check_result(result,expect0)
-    pause()
+    th.check_result(result,expect0)
+    th.pause(do_pauses)
 
     print("""First, seek_plan backtracks to use a different method for 'put_it'. But the
 solution it finds for 'put_it' doesn't satisfy the preconditions of the
 method for 'need1', making it backtrack to use a third method for 'put_it'.
 """)    
     result = gtpyhop.find_plan(state0,[('put_it',),('need1',)])
-    check_result(result,expect1)
+    th.check_result(result,expect1)

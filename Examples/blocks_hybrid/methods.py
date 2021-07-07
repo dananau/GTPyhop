@@ -1,5 +1,5 @@
 """
-Method definitions for blocks_goals.
+Method definitions for blocks_hybrid.
 -- Dana Nau <nau@umd.edu>, July 6, 2021
 """
 
@@ -59,11 +59,11 @@ def m_moveblocks(s,mgoal):
     """
     This method implements the following block-stacking algorithm [1]: 
     - If there's a clear block x that can be moved to a place where it won't
-      need to be moved again, then return a todo list that includes goals to
+      need to be moved again, then return a todo list that includes tasks to
       move it there, followed by mgoal (to achieve the remaining goals).
     - Otherwise, if there's a clear block x that needs to be moved out of the
       way to make another block movable, then return a todo list that includes
-      goals to move x to the table, followed by mgoal.
+      tasks to move x to the table, followed by mgoal.
     - Otherwise, no blocks need to be moved.
     [1] N. Gupta and D. S. Nau. On the complexity of blocks-world 
         planning. Artificial Intelligence 56(2-3):223–254, 1992.
@@ -73,16 +73,16 @@ def m_moveblocks(s,mgoal):
     for x in all_clear_blocks(s):
         xstat = status(x,s,mgoal)
         if xstat == 'move-to-block':
-            return [('pos',x,'hand'), ('pos',x,mgoal.pos[x]), mgoal]
+            return [('take',x), ('put',x,mgoal.pos[x]), mgoal]
         elif xstat == 'move-to-table':
-            return [('pos',x,'hand'), ('pos',x,'table'), mgoal]
+            return [('take',x), ('put',x,'table'), mgoal]
         else:
             continue
 
     # if we get here, no blocks can be moved to their final locations
     for x in all_clear_blocks(s):
         if status(x,s,mgoal) == 'waiting' and not s.pos[x] == 'table':
-            return [('pos',x,'hand'), ('pos',x,'table'), mgoal]
+            return [('take',x), ('put',x,'table'), mgoal]
 
     # if we get here, there are no blocks that need moving
     return []
@@ -92,39 +92,35 @@ gtpyhop.declare_multigoal_methods(m_moveblocks)
 
 
 ################################################################################
-# methods for 'pos' goals.
-#
-# In the blocks_tasks and blocks_hybrid domains, the m_take and m_put methods
-# have simpler preconditions, because the task names 'take' and 'put' tell when
-# to use each method.  Here, each method needs some additional preconditions to
-# tell what kind of 'pos' task it's for.
+### methods for 'take' and 'put' tasks
 
 
-def m_take(state,x,h):
+def m_take(s,x):
     """
-    If goal is ('pos',x,'hand') and x is clear and the hand is empty, then
-    return a todo list containing either a pickup or an unstack task.
+    Generate either a pickup or unstack action for x.
     """
-    if h == 'hand' and state.clear[x] and state.holding['hand'] == False:
-        if state.pos[x] == 'table':
+    if s.clear[x] == True:
+        if s.pos[x] == 'table':
                 return [('pickup',x)]
         else:
-                return [('unstack',x,state.pos[x])]
+                return [('unstack',x,s.pos[x])]
     else:
         return False
 
+gtpyhop.declare_task_methods('take',m_take)
 
-def m_put(state,x,y):
+
+def m_put(s,x,y):
     """
-    If goal is ('pos',x,y) (where x is a block and y is its destination) and
-    we're holding x, return a todo list containing a putdown or a stack task.
+    Generate either a putdown or stack action for x.
+    y is x's destination: either the table or another block.
     """
-    if y != 'hand' and state.pos[x] == 'hand':
+    if s.holding['hand'] == x:
         if y == 'table':
                 return [('putdown',x)]
-        elif state.clear[y]:
+        else:
                 return [('stack',x,y)]
     else:
         return False
 
-gtpyhop.declare_unigoal_methods('pos', m_take, m_put)
+gtpyhop.declare_task_methods('put',m_put)

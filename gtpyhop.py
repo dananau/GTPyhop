@@ -1,41 +1,16 @@
-# Author: Dana Nau <nau@umd.edu>
-# June 6, 2021
-#
-# Copyright (c) 2021, University of Maryland
-# BSD 3-Clause License
+# SPDX-FileCopyrightText: 2021 University of Maryland
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+
+# GTPyhop, version 1.1
+# Author: Dana Nau <nau@umd.edu>, July 6, 2021
 
 """
-GTPyhop is a planner based on Pyhop, that can plan for both tasks and
+GTPyhop is an automated planning system that can plan for both tasks and
 goals. It requires Python 3. 
 
-This file provides the following classes, functions, and variables. There
-are docstrings for each of them. A good place to start might be the
-docstrings for find_plan and run_lazy_lookahead.
-
-- classes and their methods: 
-    Domain:    copy, display
-    Multigoal: copy, display
-    State:     copy, display
-
-- functions:
-    find_plan              seek_plan                 run_lazy_lookahead
-    declare_actions        declare_commands        
-    declare_task_methods   declare_unigoal_methods   declare_multigoal_methods
-    print_actions          print_commands            print_methods
-    get_type               m_split_multigoal
-
-- global variables:
-    current_domain         verbose          verify_goals
-
-Accompanying this file are a README.md file that gives an overview of GTPyhop,
-and several files that give examples of how to use GTPyhop. To run them, try
-importing one or more of the following from the Examples directory:
-    simple_goals                simple_tasks
-    simple_tasks_with_error     backtracking_tasks
-    blocks_tasks                blocks_goals
-    blocks_goal_splitting       pyhop_simple_travel_example
-
-See also the blocked comment entitled "Applying actions and commands".
+Accompanying this file are a README.md file giving an overview of GTPyhop,
+and several examples of how to use GTPyhop. To run them, try importing any
+of the modules in the Examples directory.
 """
 
 # For use in debugging:
@@ -287,6 +262,9 @@ class Domain():
         
         # list of all methods for multigoals
         self._multigoal_method_list = []
+        
+        # the names of all the methods
+#         self._all_method_names = set()
 
     def __str__(self):
         return f"<Domain {self.__name__}>"
@@ -414,12 +392,14 @@ def print_methods(domain=None):
 
 def declare_actions(*actions):
     """
-    Each member of actions must be a function name (not a string).
-    declare_actions tells GTPyhop that each of them is an action. For
-    example, this tells GTPyhop that pickup and putdown are actions:
+    declare_actions adds each member of 'actions' to the current domain's list
+    of actions. For example, this says that pickup and putdown are actions:
         declare_actions(pickup,putdown)
+        
+    declare_actions can be called multiple times to add more actions.
     
-    declare_actions can be called several times to declare more actions.
+    You can see the current domain's list of actions by executing
+        current_domain.display()
     """
     if current_domain == None:
         raise Exception(f"cannot declare actions until a domain has been created.")
@@ -438,14 +418,17 @@ def declare_operators(*actions):
 
 def declare_commands(*commands):
     """
-    Each member of commands must be a function name (not a string), and the
-    name should have the form c_foo, where foo is the name of an action.
-    declare_commands tells GTPyhop that each of the functions is a command.
-    Example: the following tells GTPyhop that c_pickup and c_putdown are
-    commands:
+    declare_commands adds each member of 'commands' to the current domain's
+    list of commands.  Each member of 'commands' should be a function whose
+    name has the form c_foo, where foo is the name of an action. For example,
+    this says that c_pickup and c_putdown are commands:
         declare_commands(c_pickup,c_putdown)
     
-    declare_commands can be called several times to declare more commands.
+    declare_commands can be called several times to add more commands.
+
+    You can see the current domain's list of commands by executing
+        current_domain.display()
+
     """
     if current_domain == None:
         raise Exception(f"cannot declare commands until a domain has been created.")
@@ -455,16 +438,15 @@ def declare_commands(*commands):
 
 def declare_task_methods(task_name, *methods):
     """
-    declare_task_methods modifies the current domain (i.e., the domain object
-    stored in the global variable 'current_domain') to specify that the
-    methods are relevant for tasks of the form (task_name, arg1, ..., argn).     
-      - task_name must be a character string
-      - each member of 'methods' must be a function name    
+    'task_name' should be a character string, and 'methods' should be a list
+    of functions. declare_task_methods adds each member of 'methods' to the
+    current domain's list of methods to use for tasks of the form
+        (task_name, arg1, ..., argn).     
 
     Example:
         declare_task_methods('travel', travel_by_car, travel_by_foot)
-    tells Pyhop that travel_by_car and travel_by_foot are methods and are 
-    relevant for tasks such as these:
+    says that travel_by_car and travel_by_foot are methods and that GTPyhop
+    should try using them for any task whose task name is 'travel', e.g.,
         ('travel', 'alice', 'store')
         ('travel', 'alice', 'umd', 'ucla')
         ('travel', 'alice', 'umd', 'ucla', 'slowly')
@@ -481,8 +463,10 @@ def declare_task_methods(task_name, *methods):
         # we don't want to add any methods that are already in it
         new_methods = [m for m in methods if m not in old_methods]
         current_domain._task_method_dict[task_name].extend(new_methods)
+#         current_domain._all_method_names.update({m.__name__ for m in new_methods})
     else:
         current_domain._task_method_dict.update({task_name:list(methods)})
+#         current_domain._all_method_names.update({m.__name__ for m in methods})
     return current_domain._task_method_dict
 
 
@@ -494,56 +478,54 @@ def declare_methods(task, *methods):
     return declare_task_methods(task, *methods)
 
 
-def declare_unigoal_methods(var_name, *methods):
+def declare_unigoal_methods(state_var_name, *methods):
     """
-    GTPyhop has two types of goals: unigoals (individual goals) and multigoals 
-    (conjunctions of goals). A unigoal is represented as a 3-tuple
-            (name, arg, value)
-    giving a desired value for a state variable. For example,
-            ('loc', 'robot1', 'location2') 
-    says we want to reach a state s in which s.loc['robot1'] = 'location2'.
-    
-    declare_unigoal_methods(var_name, *methods) declares that the methods
-    in 'methods' are relevant for any unigoal (name, arg, value) such that
-    name is 'var_name'.
-        - 'var_name' must be a character string
-        - each member of 'methods' must be a function name    
-    Example:
-            declare_unigoal_method('loc',travel_by_car)
+    'state_var_name' should be a character string, and 'methods' should be a
+    list of functions. declare_unigoal_method adds each member of 'methods'
+    to the current domain's list of relevant methods for goals of the form
+        (state_var_name, arg, value)
+    where 'arg' and 'value' are the state variable's argument and the desired
+    value. For example,
+        declare_unigoal_method('loc',travel_by_car)
     says that travel_by_car is relevant for goals such as these:
-            ('loc', 'alice', 'ucla')
-            ('loc', 'bob', 'home')
+        ('loc', 'alice', 'ucla')
+        ('loc', 'bob', 'home')
 
-    The declaration becomes part of the current domain (i.e., the domain
-    object stored in the global variable 'current_domain').
-    
-    declare_unigoal_methods can be called several times to declare more
-    methods for the same goal.
+    The above kind of goal, i.e., a desired value for a single state
+    variable, is called a "unigoal". To achieve a unigoal, GTPyhop will go
+    through the unigoal's list of relevant methods one by one, trying each
+    method until it finds one that is successful.
+
+    To see each unigoal's list of relevant methods, use
+        current_domain.display()    
     """
     if current_domain == None:
         raise Exception(f"cannot declare methods until a domain has been created.")
-    if var_name not in current_domain._unigoal_method_dict:
-        current_domain._unigoal_method_dict.update({var_name:list(methods)})
+    if state_var_name not in current_domain._unigoal_method_dict:
+        current_domain._unigoal_method_dict.update({state_var_name:list(methods)})
+#         current_domain._all_method_names.update({m.__name__ for m in methods})
     else:
-        old_methods = current_domain._unigoal_method_dict[var_name]
+        old_methods = current_domain._unigoal_method_dict[state_var_name]
         new_methods = [m for m in methods if m not in old_methods]
-        current_domain._unigoal_method_dict[var_name].extend(new_methods)
+        current_domain._unigoal_method_dict[state_var_name].extend(new_methods)
+#         current_domain._all_method_names.update({m.__name__ for m in new_methods})
     return current_domain._unigoal_method_dict    
 
 
 def declare_multigoal_methods(*methods):
     """
-    declare_multigoal_methods modifies the current domain (i.e., the domain
-    object stored in the global variable 'current_domain') to specify that
-    the methods are relevant for all multigoals.
-      - each member of 'methods' must be a function name    
+    declare_multigoal_methods adds each method in 'methods' to the current
+    domain's list of multigoal methods. For example, this says that
+    stack_all_blocks and unstack_all_blocks are multigoal methods:
+        declare_multigoal_methods(stack_all_blocks, unstack_all_blocks)
+    
+    When GTPyhop tries to achieve a multigoal, it will go through the list
+    of multigoal methods one by one, trying each method until it finds one
+    that is successful. You can see the list by executing
+        current_domain.display()
 
-    Example:
-        declare_multigoal_methods(stack_all_blocks,unstack_all_blocks)
-    says that stack_all_blocks and unstack_all_blocks are multigoal methods.
-
-    declare_multigoal_methods can be called several times to declare
-    more multigoal methods.
+    declare_multigoal_methods can be called multiple times to add more
+    multigoal methods to the list.
     
     For more information, see the docstring for the Multigoal class.
     """
@@ -553,6 +535,7 @@ def declare_multigoal_methods(*methods):
     new_mg_methods = [m for m in methods if m not in \
                       current_domain._multigoal_method_list]
     current_domain._multigoal_method_list.extend(new_mg_methods)
+#     current_domain._all_method_names.update({m.__name__ for m in new_mg_methods})
     return current_domain._multigoal_method_list    
 
     
@@ -562,28 +545,30 @@ def declare_multigoal_methods(*methods):
 
 def m_split_multigoal(state,multigoal):
     """
-    m_split_multigoal is the only multigoal method that GTPyhop provides, and
-    GTPyhop won't use it unless the user declares it explicitly using
-    gtpyhop.declare_multigoal_methods. Its purpose is to achieve a multigoal
-    by sequentially achieving the multigoal's individual goals. Parameters:
-        - state is the current state
-        - multigoal is the multigoal to achieve 
+    m_split_multigoal is the only multigoal method that GTPyhop provides,
+    and GTPyhop won't use it unless the user declares it explicitly using
+        declare_multigoal_methods(m_split_multigoal)
 
-    If multigoal is true in the current state, then m_split_multigoal returns
-    []. Otherwise, it returns a goal list [g_1, ..., g_n, multigoal], where
-    g_1, ..., g_n are the goals in multigoal that aren't true in the current
-    state. This tells the planner to achieve g_1, ..., g_n sequentially, and
-    then try again to achieve multigoal. 
+    The method's purpose is to try to achieve a multigoal by achieving each
+    of the multigoal's individual goals sequentially. Parameters:
+        - 'state' is the current state
+        - 'multigoal' is the multigoal to achieve 
 
-    If the planner again uses m_split_multigoal to try to achieve multigoal,
-    m_split_multigoal will produce another list like the one above. This will
-    keep happening until the planner produces a state in which all of the
-    goals in multigoal are simultaneously true.
+    If multigoal is true in the current state, m_split_multigoal returns
+    []. Otherwise, it returns a goal list
+        [g_1, ..., g_n, multigoal],
+
+    where g_1, ..., g_n are all of the goals in multigoal that aren't true
+    in the current state. This tells the planner to achieve g_1, ..., g_n
+    sequentially, then try to achieve multigoal again. Usually this means
+    m_split_multigal will be used repeatedly, until it succeeds in producing
+    a state in which all of the goals in multigoal are simultaneously true.
 
     The main problem with m_split_multigoal is that it isn't smart about
     choosing the order in which to achieve g_1, ..., g_n. Some orderings may
-    work much better than others. Thus it might be desirable to modify
-    the method to use a heuristic function to choose a good order.
+    work much better than others. Thus, rather than using the method as it's
+    defined below, one might want to modify it to choose a good order, e.g.,
+    by using domain-specific information or a heuristic function.
     """
     goal_dict = _goals_not_achieved(state,multigoal)
     goal_list = []
@@ -631,21 +616,21 @@ def _goals_not_achieved(state,multigoal):
 verify_goals = True
 """
 If verify_goals is True, then whenever the planner uses a method m to refine
-a unigoal or multigoal, it will insert a "verification" task into the current
-partial plan. If verify_goals is False, the planner won't insert any
+a unigoal or multigoal, it will insert a "verification" task into the
+current partial plan. If verify_goals is False, the planner won't insert any
 verification tasks into the plan.
-    
-The purpose of the verification task is to raise an exception if the refinement
-produced by m doesn't achieve the goal or multigoal that it is supposed to
-achieve. The verification task won't insert anything into the final plan; it
-just will verify whether m did what it was supposed to do.
+
+The purpose of the verification task is to raise an exception if the
+refinement produced by m doesn't achieve the goal or multigoal that it is
+supposed to achieve. The verification task won't insert anything into the
+final plan; it just will verify whether m did what it was supposed to do.
 """
 
 
 def _m_verify_g(state, method, state_var, arg, desired_val, depth):
     """
-    _m_verify_g is a method that GTPyhop uses to check whether a unigoal_method
-    has achieved the goal that it was used to achieve.
+    _m_verify_g is a method that GTPyhop uses to check whether a
+    unigoal method has achieved the goal for which it was used.
     """
     if vars(state)[state_var][arg] != desired_val:
         raise Exception(f"depth {depth}: method {method} didn't achieve",
@@ -659,7 +644,7 @@ def _m_verify_g(state, method, state_var, arg, desired_val, depth):
 def _m_verify_mg(state, method, multigoal, depth):
     """
     _m_verify_g is a method that GTPyhop uses to check whether a multigoal
-    method has achieved the multigoal that it was used to achieve.
+    method has achieved the multigoal for which it was used.
     """
     goal_dict = _goals_not_achieved(state,multigoal)
     if goal_dict:
@@ -674,11 +659,12 @@ def _m_verify_mg(state, method, multigoal, depth):
 # Applying actions, commands, and methods
 
 
-def _apply_action(state, task1, agenda, plan, depth):
+def _apply_action__and_proceed(state, task1, todo_list, plan, depth):
     """
-    apply_action is called only when task1's name matches an action name.
-    It applies the action by retrieving the action's function definition
-    and calling it on the arguments.
+    _apply_action__and_proceed is called only when task1's name matches an
+    action name. It applies the action by retrieving the action's function
+    definition and calling it on the arguments, then calls seek_plan
+    recursively on todo_list.
     """
     if verbose >= 3:
         print(f'depth {depth} action {task1}: ', end='')
@@ -688,38 +674,47 @@ def _apply_action(state, task1, agenda, plan, depth):
         if verbose >= 3:
             print('applied')
             newstate.display()
-        return seek_plan(newstate, agenda, plan+[task1], depth+1)
+        return seek_plan(newstate, todo_list, plan+[task1], depth+1)
     if verbose >= 3:
         print('not applicable')
     return False
 
 
-def _apply_command(state, command, args):
-    """
-    apply_command is called only when task1's name matches a command name.
-    It applies the command by retrieving the command's function definition
-    and calling it on the arguments.
-    """
-    if verbose >= 3:
-        print(f"_apply_command {command.__name__}, args = {args}")
-    next_state = command(state.copy(),*args)
-    if next_state:
-        if verbose >= 3:
-            print('applied')
-            next_state.display()
-        return next_state
-    else:
-        if verbose >= 3:
-            print('not applicable')
-        return False
+# def _call_method__and_proceed(state, task1, todo_list, plan, depth):
+#     """
+#     _call_method__and_proceed is called only when task1's name matches a
+#     method name. To apply the method, it retrieves the function definition
+#     and calls it on the arguments to get additional todo_list items, then
+#     calls seek_plan recursively on [the additional items] + todo_list.
+#     """
+#     if verbose >= 3: 
+#         print(f'depth {depth} calling {method.__name__} directly: ', end='')
+#     
+#     method = eval(task1[0])     # get the method's function definition
+#     subtasks = method(state, *task1[1:])
+#     # Can't just say "if subtasks:", because that's wrong if subtasks == []
+#     if subtasks != False and subtasks != None:
+#         if verbose >= 3:
+#             print('applicable')
+#             print(f'depth {depth} subtasks: {subtasks}')
+#         result = seek_plan(state, subtasks+todo_list, plan, depth+1)
+#         if result != False and result != None:
+#             return result
+#     else:
+#         if verbose >= 3:
+#             print(f'not applicable')
+#     if verbose >= 3:
+#         print(f'depth {depth} method {task1[0]}{task1[1:]} failed')        
+#     return False
 
 
-def _find_task_method(state, task1, agenda, plan, depth):
+def _refine_task__and_proceed(state, task1, todo_list, plan, depth):
     """
-    If task1 is in the task-method dictionary, then iterate through the
-    list of relevant methods until we find one that's applicable, apply
-    it to get additional agenda items, and call seek_plan recursively on
-            [the additional items] + agenda.
+    If task1 is in the task-method dictionary, then iterate through the list
+    of relevant methods to find one that's applicable, apply it to get
+    additional todo_list items, and call seek_plan recursively on
+            [the additional items] + todo_list.
+
     If the call to seek_plan fails, go on to the next method in the list.
     """
     relevant = current_domain._task_method_dict[task1[0]]
@@ -734,7 +729,7 @@ def _find_task_method(state, task1, agenda, plan, depth):
             if verbose >= 3:
                 print('applicable')
                 print(f'depth {depth} subtasks: {subtasks}')
-            result = seek_plan(state, subtasks+agenda, plan, depth+1)
+            result = seek_plan(state, subtasks+todo_list, plan, depth+1)
             if result != False and result != None:
                 return result
         else:
@@ -745,12 +740,13 @@ def _find_task_method(state, task1, agenda, plan, depth):
     return False
 
 
-def _find_unigoal_method(state, goal1, agenda, plan, depth):
+def _refine_unigoal__and_proceed(state, goal1, todo_list, plan, depth):
     """
     If goal1 is in the unigoal-method dictionary, then iterate through the
-    list of relevant methods until we find one that's applicable, apply it
-    to get additional agenda items, and call seek_plan recursively on
-          [the additional items] + [verify_g] + agenda,
+    list of relevant methods to find one that's applicable, apply it to get
+    additional todo_list items, and call seek_plan recursively on
+          [the additional items] + [verify_g] + todo_list,
+
     where [verify_g] verifies whether the method actually achieved goal1.
     If the call to seek_plan fails, go on to the next method in the list.
     """
@@ -760,7 +756,7 @@ def _find_unigoal_method(state, goal1, agenda, plan, depth):
     if vars(state).get(state_var_name).get(arg) == val:
         if verbose >= 3:
             print(f'already achieved')
-        return seek_plan(state, agenda, plan, depth+1)
+        return seek_plan(state, todo_list, plan, depth+1)
     relevant = current_domain._unigoal_method_dict[state_var_name]
     if verbose >= 3:
         print(f'methods {[m.__name__ for m in relevant]}')
@@ -778,8 +774,8 @@ def _find_unigoal_method(state, goal1, agenda, plan, depth):
                                  state_var_name, arg, val, depth)]
             else:
                 verification = []
-            agenda = subgoals + verification + agenda
-            result = seek_plan(state, agenda, plan, depth+1)
+            todo_list = subgoals + verification + todo_list
+            result = seek_plan(state, todo_list, plan, depth+1)
             if result != False and result != None:
                 return result
         else:
@@ -790,18 +786,14 @@ def _find_unigoal_method(state, goal1, agenda, plan, depth):
     return False
 
 
-def _find_multigoal_method(state, goal1, agenda, plan, depth):
+def _refine_multigoal__and_proceed(state, goal1, todo_list, plan, depth):
     """
     If goal1 is a multigoal, then iterate through the list of multigoal
-    methods until we find one that's applicable, apply it to get additional
-    agenda items, and call seek_plan recursively on
-          [the additional items] + [verify_mg] + agenda,
+    methods to find one that's applicable, apply it to get additional
+    todo_list items, and call seek_plan recursively on
+          [the additional items] + [verify_mg] + todo_list,
+
     where [verify_mg] verifies whether the method actually achieved goal1.
-    If the call to seek_plan fails, go on to the next method in the list.
-
-
-    Unlike with unigoal methods, the call to seek_plan doesn't include a
-    verification test because it's not clear what we're supposed to verify.
     If the call to seek_plan fails, go on to the next method in the list.
     """
     if verbose >= 3:
@@ -822,8 +814,8 @@ def _find_multigoal_method(state, goal1, agenda, plan, depth):
                 verification = [('_verify_mg', method.__name__, goal1, depth)]
             else:
                 verification = []
-            agenda = subgoals + verification + agenda
-            result = seek_plan(state, agenda, plan, depth+1)
+            todo_list = subgoals + verification + todo_list
+            result = seek_plan(state, todo_list, plan, depth+1)
             if result != False and result != None:
                 return result
         else:
@@ -838,61 +830,62 @@ def _find_multigoal_method(state, goal1, agenda, plan, depth):
 # The planning algorithm
 
 
-def find_plan(state, agenda):
+def find_plan(state, todo_list):
     """
-    find_plan tries to find a plan that accomplishes the items in agenda,
-    starting from the given state, using whatever methods and actions you 
+    find_plan tries to find a plan that accomplishes the items in todo_list,
+    starting from the given state, using whatever methods and actions you
     declared previously. If successful, it returns the plan. Otherwise it
     returns False. Arguments:
      - 'state' is a state;
-     - 'agenda' is a list of goals, tasks, and actions;
+     - 'todo_list' is a list of goals, tasks, and actions.
     """
     if verbose >= 1: 
-        agenda_str = '[' + ', '.join([_item_to_string(x) for x in agenda]) + ']'
+        todo_string = '[' + ', '.join([_item_to_string(x) for x in todo_list]) + ']'
         print(f'FP> find_plan, verbose={verbose}:')
-        print(f'    state = {state.__name__}\n    agenda = {agenda_str}')
-    result = seek_plan(state, agenda, [], 0)
+        print(f'    state = {state.__name__}\n    todo_list = {todo_string}')
+    result = seek_plan(state, todo_list, [], 0)
     if verbose >= 1: print('FP> result =',result,'\n')
     return result
 
 
-def pyhop(state, agenda):
+def pyhop(state, todo_list):
     if verbose > 0:
         print("""
         >> The function 'pyhop' exists to provide backward compatibility
         >> with Pyhop. In the future, please use find_plan instead.""")
-    return find_plan(state, agenda)
+    return find_plan(state, todo_list)
 
 
-def seek_plan(state, agenda, plan, depth):
+def seek_plan(state, todo_list, plan, depth):
     """
     Workhorse for find_plan. Arguments:
      - state is the current state
-     - agenda is the current list of goals, tasks, and actions
+     - todo_list is the current list of goals, tasks, and actions
      - plan is the current partial plan
      - depth is the recursion depth, for use in debugging
     """
     if verbose >= 2: 
-        agenda_str = '[' + ', '.join([_item_to_string(x) for x in agenda]) + ']'
-        print(f'depth {depth} agenda ' + agenda_str)
-    if agenda == []:
+        todo_string = '[' + ', '.join([_item_to_string(x) for x in todo_list]) + ']'
+        print(f'depth {depth} todo_list ' + todo_string)
+    if todo_list == []:
         if verbose >= 3:
             print(f'depth {depth} no more tasks or goals, return plan')
         return plan
-    item1 = agenda[0]
+    item1 = todo_list[0]
     ttype = get_type(item1)
-    if ttype in {'list','tuple'}:
+    if ttype in {'Multigoal'}:
+        return _refine_multigoal__and_proceed(state, item1, todo_list[1:], plan, depth)
+    elif ttype in {'list','tuple'}:
         if item1[0] in current_domain._action_dict:
-            return _apply_action(state, item1, agenda[1:], plan, depth)
+            return _apply_action__and_proceed(state, item1, todo_list[1:], plan, depth)
         elif item1[0] in current_domain._task_method_dict:
-            return _find_task_method(state, item1, agenda[1:], plan, depth)
+            return _refine_task__and_proceed(state, item1, todo_list[1:], plan, depth)
         elif item1[0] in current_domain._unigoal_method_dict:
-            return _find_unigoal_method(state, item1, agenda[1:], plan, depth)
-    elif ttype in {'Multigoal'}:
-        return _find_multigoal_method(state, item1, agenda[1:], plan, depth)
-
+            return _refine_unigoal__and_proceed(state, item1, todo_list[1:], plan, depth)
+#         elif item1[0] in current_domain._all_method_names:
+#             return _call_method__and_proceed(state, item1, todo_list[1:], plan, depth)            
     raise Exception(    \
-        f"depth {depth}: {item1} isn't an action, task, goal, or multigoal\n")
+        f"depth {depth}: {item1} isn't an action, task, unigoal, or multigoal\n")
     return False
 
 
@@ -911,21 +904,19 @@ def _item_to_string(item):
 # An actor
 
 
-def run_lazy_lookahead(state, agenda, max_tries=10):
+def run_lazy_lookahead(state, todo_list, max_tries=10):
     """
     An adaptation of the run_lazy_lookahead algorithm from Ghallab et al.
     (2016), Automated Planning and Acting. It works roughly like this:
         loop:
-            plan = find_plan(state, agenda)
-            if plan = []:
-                return state    // the new current state 
+            plan = find_plan(state, todo_list)
+            if plan = [] then return state    // the new current state 
             for each action in plan:
-                execute the corresponding command
-                if the command fails:
-                    continue the outer loop
+                try to execute the corresponding command
+                if the command fails, continue the outer loop
     Arguments: 
       - 'state' is a state;
-      - 'agenda' is a list of tasks, goals, and multigoals;
+      - 'todo_list' is a list of tasks, goals, and multigoals;
       - max_tries is a bound on how many times to execute the outer loop.
       
     Note: whenever run_lazy_lookahead encounters an action for which there is
@@ -935,7 +926,7 @@ def run_lazy_lookahead(state, agenda, max_tries=10):
     if verbose >= 1: 
         print(f"RLL> run_lazy_lookahead, verbose = {verbose}, max_tries = {max_tries}")
         print(f"RLL> initial state: {state.__name__}")
-        print('RLL> To do:', agenda)
+        print('RLL> To do:', todo_list)
 
     for tries in range(1,max_tries+1):
         if verbose >= 1: 
@@ -944,7 +935,7 @@ def run_lazy_lookahead(state, agenda, max_tries=10):
                 print(f"RLL> {tries}{ordinals.get(tries)} call to find_plan:\n")
             else:
                 print(f"RLL> {tries}th call to find_plan:\n")
-        plan = find_plan(state, agenda)
+        plan = find_plan(state, todo_list)
         if plan == False or plan == None:
             if verbose >= 1:
                 raise Exception(
@@ -966,7 +957,7 @@ def run_lazy_lookahead(state, agenda, max_tries=10):
                 
             if verbose >= 1:
                 print('RLL> Command:', [command_name] + list(action[1:]))
-            new_state = _apply_command(state, command_func, action[1:])
+            new_state = _apply_command__and_proceed(state, command_func, action[1:])
             if new_state == False:
                 if verbose >= 1: 
                     print(f'RLL> WARNING: command {command_name} failed; will call find_plan.')
@@ -983,12 +974,28 @@ def run_lazy_lookahead(state, agenda, max_tries=10):
     if verbose >= 2: state.display(heading='RLL> final state')
     return state
 
-###############################################################################
-# Create a default domain for GTPyhop to use if the user doesn't define one.
-# I would prefer to put this near the definition of the Domain class, but it
-# must come after some things that the Domain class's __init__ function uses.
 
-current_domain = Domain('default domain')
+def _apply_command__and_proceed(state, command, args):
+    """
+    _apply_command__and_proceed applies 'command' by retrieving its
+    function definition and calling it on the arguments.
+    """
+    if verbose >= 3:
+        print(f"_apply_command__and_proceed {command.__name__}, args = {args}")
+    next_state = command(state.copy(),*args)
+    if next_state:
+        if verbose >= 3:
+            print('applied')
+            next_state.display()
+        return next_state
+    else:
+        if verbose >= 3:
+            print('not applicable')
+        return False
+
+
+###############################################################################
+# Print brief information about how to interpret the program's output
 
 print(f"\nImported GTPyhop version 1.0.")
 print(f"Messages from find_plan will be prefaced with 'FP>'.")
