@@ -7,7 +7,7 @@
 
 <hr>
 
-This document assumes you already have at least a little familarity with GTPyhop. You might want to read [^0] first.
+This document assumes you already have at least a little familarity with GTPyhop. You might want to read [1] first.
 
 <hr>
 
@@ -197,9 +197,9 @@ Depending on feedback from users, I'll consider whether to make `verify_goals = 
 
 ## <span id="GDP">5. Comparison with GDP and GoDel</span>
 
-In HGN planners such as GDP [^1] and GoDel [^2], an action *a* may be applied to a goal if the current state satisfies *a*'s preconditions, *a* has an effect that matches the goal, and none of *a*'s effects negate the goal. In contrast, GTPyhop does not apply actions directly to goals. GTPyhop will not put an action into the plan unless the action is in the agenda, either because it was there initially or because a method put it there.
+In HGN planners such as GDP [2] and GoDel [3], an action *a* may be applied to a goal if the current state satisfies *a*'s preconditions, *a* has an effect that matches the goal, and none of *a*'s effects negate the goal. In contrast, GTPyhop does not apply actions directly to goals. GTPyhop will not put an action into the plan unless the action is in the agenda, either because it was there initially or because a method put it there.
 
-To see why, let us rewrite the `unload` action in classical precondition-and-effects notation [^3]:
+To see why, let us rewrite the `unload` action in classical precondition-and-effects notation [4]:
 
     unload(robot, container, location):
         precond: loc[robot] = location, loc[container] = robot
@@ -332,10 +332,10 @@ GTPyhop is mostly backward-compatible with Pyhop, but not completely so. Below i
 
 ## <span id="References">8. References</span>
 
-[^0]: Nau, Patra, Roberts, Bansod and Li. [GTPyhop: A Hierarchical Goal+Task Planner Implemented in Python](http://www.cs.umd.edu/users/nau/papers/nau2021gtpyhop.pdf). ICAPS HPlan Workshop, 2021. 
+[1]: Nau, Patra, Roberts, Bansod and Li. [GTPyhop: A Hierarchical Goal+Task Planner Implemented in Python](http://www.cs.umd.edu/users/nau/papers/nau2021gtpyhop.pdf). ICAPS HPlan Workshop, 2021. 
 
-[^1]: V. Shivashankar, U. Kuter, D. S. Nau, and R. Alford. [A hierarchical goal-based formalism and algorithm for single-agent planning](https://www.cs.umd.edu/~nau/papers/shivashankar2012hierarchical.pdf). In Proc. International Conference on Autonomous Agents and Multiagent Systems (AAMAS), 2012.
+[2]: V. Shivashankar, U. Kuter, D. S. Nau, and R. Alford. [A hierarchical goal-based formalism and algorithm for single-agent planning](https://www.cs.umd.edu/~nau/papers/shivashankar2012hierarchical.pdf). In Proc. International Conference on Autonomous Agents and Multiagent Systems (AAMAS), 2012.
 
-[^2]: V. Shivashankar, R. Alford, U. Kuter, and D. Nau. [The GoDeL planning system: A more perfect union of domain-independent and hierarchical planning](https://www.cs.umd.edu/~nau/papers/shivashankar2013godel.pdf). In Proc. International Joint Conference on Artificial Intelligence (IJCAI), pp. 2380–2386, 2013.
+[3]: V. Shivashankar, R. Alford, U. Kuter, and D. Nau. [The GoDeL planning system: A more perfect union of domain-independent and hierarchical planning](https://www.cs.umd.edu/~nau/papers/shivashankar2013godel.pdf). In Proc. International Joint Conference on Artificial Intelligence (IJCAI), pp. 2380–2386, 2013.
 
-[^3]: M. Ghallab, D. S. Nau, and P. Traverso. [*Automated Planning and Acting*](http://www.laas.fr/planning). Cambridge University Press, Sept. 2016.
+[4]: M. Ghallab, D. S. Nau, and P. Traverso. [*Automated Planning and Acting*](http://www.laas.fr/planning). Cambridge University Press, Sept. 2016.

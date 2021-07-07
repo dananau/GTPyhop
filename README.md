@@ -6,7 +6,7 @@
 > July 6, 2021  
 
 
-GTPyhop is an automated planning system that extends the [Pyhop](https://bitbucket.org/dananau/pyhop/) planner to plan for both tasks and goals. GTPyhop plans for tasks in the same way as Pyhop [^1], and is mostly backward-compatible with Pyhop. The way it plans for goals is based on the GDP algorithm [^2].
+GTPyhop is an automated planning system that extends the [Pyhop](https://bitbucket.org/dananau/pyhop/) planner to plan for both tasks and goals. GTPyhop plans for tasks in the same way as Pyhop [1], and is mostly backward-compatible with Pyhop. The way it plans for goals is based on the GDP algorithm [2].
 
 A GTPyhop planning problem is specified by a *todo list* that contains tasks, actions, and goals. To construct a solution plan, GTPyhop goes one by one through the items in the todo list. Here are the possibilities for each item:
 
@@ -19,7 +19,7 @@ GTPyhop also includes:
 
   - A `Domain` class to contain the actions, commands, tasks, goals, and methods for a planning and acting domain. This makes it possible to import multiple domains during a single Python run, without them interfering with each other.
   
-  - An implementation of a simple acting algorithm called Run-Lazy-Lookahead [^3], a way to declare commands for the actor to perform, and several examples of integrated planning and acting using Run-Lazy-Lookahead and GTPyhop.
+  - An implementation of a simple acting algorithm called Run-Lazy-Lookahead [3], a way to declare commands for the actor to perform, and several examples of integrated planning and acting using Run-Lazy-Lookahead and GTPyhop.
   
   - A simple test harness that's useful for running and debugging examples.
   
@@ -27,9 +27,9 @@ GTPyhop also includes:
 
 ### Further reading
 
-  - The best overall description of GTPyhop is [^4].
-  - [Some GTPyhop Details](GTPyhop_Details.md) discusses some details of GTPyhop's operation, compares it to some other planners, and discusses backward-compatibility with Pyhop.
-  - GTPyhop does a totally-ordered version of Goal-Task-Network (GTN) planning without sharing and task insertion. For precise definitions of those terms and their theoretical properties, see [^5].
+  - The best overall description of GTPyhop is [4].
+  - [Some GTPyhop Details](Some_GTPyhop_Details.md) discusses some details of GTPyhop's operation, compares it to some other planners, and discusses backward-compatibility with Pyhop.
+  - GTPyhop does a totally-ordered version of Goal-Task-Network (GTN) planning without sharing and task insertion. For precise definitions of those terms and their theoretical properties, see [5].
 
 ### Example problem domains
 
@@ -51,12 +51,12 @@ Launch Python 3, and try one or more of the following:
 
 ### References
 
-[^1]: D. Nau. [Game Applications of HTN Planning with State Variables](http://www.cs.umd.edu/~nau/papers/nau2013game.pdf). In *ICAPS Workshop on Planning in Games*, 2013. Invited talk.
+[1]: D. Nau. [Game Applications of HTN Planning with State Variables](http://www.cs.umd.edu/~nau/papers/nau2013game.pdf). In *ICAPS Workshop on Planning in Games*, 2013. Invited talk.
 
-[^2]: V. Shivashankar, U. Kuter, D. S. Nau, and R. Alford. [A hierarchical goal-based formalism and algorithm for single-agent planning](https://www.cs.umd.edu/~nau/papers/shivashankar2012hierarchical.pdf). In *Proc. International Conference on Autonomous Agents and Multiagent Systems (AAMAS)*, 2012.
+[2]: V. Shivashankar, U. Kuter, D. S. Nau, and R. Alford. [A hierarchical goal-based formalism and algorithm for single-agent planning](https://www.cs.umd.edu/~nau/papers/shivashankar2012hierarchical.pdf). In *Proc. International Conference on Autonomous Agents and Multiagent Systems (AAMAS)*, 2012.
 
-[^3]: M. Ghallab, D. S. Nau, and P. Traverso. [*Automated Planning and Acting*](http://www.laas.fr/planning). Cambridge University Press, Sept. 2016.
+[3]: M. Ghallab, D. S. Nau, and P. Traverso. [*Automated Planning and Acting*](http://www.laas.fr/planning). Cambridge University Press, Sept. 2016.
 
-[^4]: D. Nau, S. Patra, M. Roberts, Y. Bansod and R. Li. [GTPyhop: A Hierarchical Goal+Task Planner Implemented in Python](http://www.cs.umd.edu/users/nau/papers/nau2021gtpyhop.pdf). ICAPS HPlan Workshop, 2021. 
+[4]: D. Nau, S. Patra, M. Roberts, Y. Bansod and R. Li. [GTPyhop: A Hierarchical Goal+Task Planner Implemented in Python](http://www.cs.umd.edu/users/nau/papers/nau2021gtpyhop.pdf). ICAPS HPlan Workshop, 2021. 
 
-[^5]: R. Alford, V. Shivashankar, M. Roberts, J. Frank, and D.W. Aha. [Hierarchical planning: relating task and goal decomposition with task sharing](https://www.ijcai.org/Abstract/16/429). In IJCAI, 2016, pp. 3022–3028.
+[5]: R. Alford, V. Shivashankar, M. Roberts, J. Frank, and D.W. Aha. [Hierarchical planning: relating task and goal decomposition with task sharing](https://www.ijcai.org/Abstract/16/429). In IJCAI, 2016, pp. 3022–3028.
