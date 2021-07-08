@@ -6,57 +6,67 @@
 > July 6, 2021  
 
 
-GTPyhop is an automated planning system that extends the [Pyhop](https://bitbucket.org/dananau/pyhop/) planner to plan for both tasks and goals. GTPyhop plans for tasks in the same way as Pyhop [[Nau13](#Nau13)], and is mostly backward-compatible with Pyhop. The way it plans for goals is based on the GDP algorithm [[Shi12](#Shi12)].
+GTPyhop is an automated planning system to plan for both tasks and goals. It plans for tasks in the same way as the [Pyhop](https://bitbucket.org/dananau/pyhop/) planner [[Nau13](#Nau13)], and it is mostly backward-compatible with Pyhop. The way it plans for goals is based on the GDP algorithm [[Shi12](#Shi12)].
 
-A GTPyhop planning problem is specified by a *todo list* that contains tasks, actions, and goals. To construct a solution plan, GTPyhop goes one by one through the items in the todo list. Here are the possibilities for each item:
+### How GTPyhop works
 
-  - If it is an applicable action, GTPyhop applies it to update the current state, and appends it to the solution plan.
-  - If it is a task, GTPyhop looks through the list of relevant tasks methods, and applies the first one that is applicable. This produces a (possibly empty) list of tasks, actions, and goals that GTPyhop inserts into the todo list.
-  - If it is a goal *g*, GTPyhop looks through the list of relevant goal methods, and applies the first one that is applicable. This produces a (possibly empty) list of tasks, actions, and goals that GTPyhop inserts into the todo list, along with a way to check whether they actually achieve *g*.
-  - If a failure occurs (e.g., the action is inapplicable, or a goal or task that has no applicable methods, or a goal method doesn't achieve its goal), GTPyhop backtracks to choose different methods for earlier tasks and goals in the todo list.
+A GTPyhop planning problem is specified by a *todo list*, a sequence of tasks, actions, and goals. GTPyhop constructs a solution plan π by planning for these items one by one, in the order that they occur in the list. Here are the possibilities for each item:
 
-GTPyhop also includes:
+  - If it is an applicable action, GTPyhop appends the action to π, and executes the action to update the current state.
+  - If it is a task, GTPyhop looks through the list of relevant task methods, and executes the first one that is applicable in the current state. This produces a (possibly empty) list of tasks, actions, and goals. GTPyhop inserts them into the todo list.
+  - If it is a goal, GTPyhop looks through the list of relevant goal methods, and executes the first one that is applicable in the current state. This produces a (possibly empty) list of tasks, actions, and goals. GTPyhop inserts them into the todo list, along with a way to check whether they actually achieve the goal.
+  - Whenever one of the above steps fails (e.g., an action is inapplicable, a goal or task has no applicable methods, or a goal method doesn't achieve its goal), GTPyhop backtracks to choose a different method for an earlier task or goal in the todo list.
 
-  - A `Domain` class to contain the actions, commands, tasks, goals, and methods for a planning and acting domain. This makes it possible to import multiple domains during a single Python run, without them interfering with each other.
+GTPyhop also provides a `Domain` class to contain the actions, tasks, goals, and methods for a problem domain. This makes it possible to use multiple problem domains during a single Python session, without them interfering with each other.
+
+### Other things in the GTPyhop distribution
   
-  - An implementation of a simple acting algorithm called Run-Lazy-Lookahead [[Gha16](#Gha16)], a way to declare commands for the actor to perform, and several examples of integrated planning and acting using Run-Lazy-Lookahead and GTPyhop.
+  - A simple acting algorithm called Run-Lazy-Lookahead [[Gha16](#Gha16)], and several examples of integrated planning and acting using Run-Lazy-Lookahead and GTPyhop.
   
-  - A simple test harness that's useful for running and debugging examples.
+  - A simple test harness that's useful for debugging and demonstrating problem domains.
   
-  - Several example planning and acting domains (see below).
+  - Several example problem domains. Go to the `Examples` directory, launch Python 3, and try one or more of the following:
+
+        import simple_goals
+        import simple_tasks
+        import simple_tasks_with_error
+        import backtracking_tasks
+        import blocks_hybrid
+        import blocks_tasks
+        import blocks_goals
+        import blocks_goal_splitting
+        import logistics_goals
+        import pyhop_simple_travel_example
 
 ### Further reading
 
   - The best overall description of GTPyhop is [[Nau21](#Nau21)].
   - [Some GTPyhop Details](Some_GTPyhop_Details.md) discusses some details of GTPyhop's operation, compares it to some other planners, and discusses backward-compatibility with Pyhop.
   - GTPyhop does a totally-ordered version of Goal-Task-Network (GTN) planning without sharing and task insertion. For precise definitions of those terms and their theoretical properties, see [[Alf16](#Alf16)].
-
-### Example problem domains
-
-Launch Python 3, and try one or more of the following:
-
-    import Examples.simple_goals
-    import Examples.simple_tasks
-    import Examples.simple_tasks_with_error
-    import Examples.backtracking_tasks
-    import Examples.blocks_hybrid
-    import Examples.blocks_tasks
-    import Examples.blocks_goals
-    import Examples.blocks_goal_splitting
-    import Examples.logistics_goals
-    import Examples.pyhop_simple_travel_example
-
-
-
+  - [[Ban21](#Ban21)] describes a re-entrant version of GTPyhop that has some advantages for integration of acting and planning.
+  
 
 ### References
 
-<span id="Alf16">[Alf16]</span> R. Alford, V. Shivashankar, M. Roberts, J. Frank, and D.W. Aha. [Hierarchical planning: relating task and goal decomposition with task sharing](https://www.ijcai.org/Abstract/16/429). In IJCAI, 2016, pp. 3022–3028.
+<span id="Alf16">[Alf16]</span> R. Alford, V. Shivashankar, M. Roberts, J. Frank, and D.W. Aha.
+[Hierarchical planning: relating task and goal decomposition with task sharing](https://www.ijcai.org/Abstract/16/429). 
+In *IJCAI*, 2016, pp. 3022–3028.
 
-<span id="Gha16">[Gha16]</span> M. Ghallab, D. S. Nau, and P. Traverso. [*Automated Planning and Acting*](http://www.laas.fr/planning). Cambridge University Press, Sept. 2016.
+<span id="Ban21">[Ban21]</span> Y. Bansod, D.S. Nau, S. Patra and M. Roberts.
+[Integrating Planning and Acting by Using a Re-Entrant HTN Planner](https://www.cs.umd.edu/~nau/papers/bansod2021integrating). 
+In *ICAPS HPlan Workshop*, 2021.
 
-<span id="Nau13">[Nau13]</span> D. Nau. [Game Applications of HTN Planning with State Variables](http://www.cs.umd.edu/~nau/papers/Nau13game.pdf). In *ICAPS Workshop on Planning in Games*, 2013. Invited talk.
+<span id="Gha16">[Gha16]</span> M. Ghallab, D.S. Nau, and P. Traverso.
+[*Automated Planning and Acting*](http://www.laas.fr/planning). 
+Cambridge University Press, Sept. 2016.
 
-<span id="Nau21">[Nau21]</span> D. Nau, S. Patra, M. Roberts, Y. Bansod and R. Li. [GTPyhop: A Hierarchical Goal+Task Planner Implemented in Python](http://www.cs.umd.edu/users/nau/papers/Nau21gtpyhop.pdf). ICAPS HPlan Workshop, 2021. 
+<span id="Nau13">[Nau13]</span> D.S. Nau. [Game Applications of HTN Planning with State Variables](http://www.cs.umd.edu/~nau/papers/nau2013game.pdf). 
+In *ICAPS Workshop on Planning in Games*, 2013. Invited talk.
 
-<span id="Shi12">[Shi12]</span> V. Shivashankar, U. Kuter, D. S. Nau, and R. Alford. [A hierarchical goal-based formalism and algorithm for single-agent planning](https://www.cs.umd.edu/~nau/papers/shivashankar2012hierarchical.pdf). In *Proc. International Conference on Autonomous Agents and Multiagent Systems (AAMAS)*, 2012.
+<span id="Nau21">[Nau21]</span> D.S. Nau, S. Patra, M. Roberts, Y. Bansod and R. Li.
+[GTPyhop: A Hierarchical Goal+Task Planner Implemented in Python](http://www.cs.umd.edu/users/nau/papers/nau2021gtpyhop.pdf). 
+In *ICAPS HPlan Workshop*, 2021. 
+
+<span id="Shi12">[Shi12]</span> V. Shivashankar, U. Kuter, D.S. Nau, and R. Alford.
+[A hierarchical goal-based formalism and algorithm for single-agent planning](https://www.cs.umd.edu/~nau/papers/shivashankar2012hierarchical.pdf). 
+In *Proc. International Conference on Autonomous Agents and Multiagent Systems (AAMAS)*, 2012.
