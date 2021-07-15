@@ -3,7 +3,7 @@
 
 > **Dana S. Nau**  
 > University of Maryland  
-> July 6, 2021  
+> July 14, 2021
 
 
 GTPyhop is an automated planning system to plan for both tasks and goals. It plans for tasks in the same way as the [Pyhop](https://bitbucket.org/dananau/pyhop/) planner [[Nau13](#Nau13)], and it is mostly backward-compatible with Pyhop. The way it plans for goals is based on the GDP algorithm [[Shi12](#Shi12)].
@@ -27,23 +27,23 @@ GTPyhop also provides a `Domain` class to contain the actions, tasks, goals, and
   
   - Several example problem domains. Go to the `Examples` directory, launch Python 3, and try one or more of the following:
 
-        import simple_goals
-        import simple_tasks
-        import simple_tasks_with_error
-        import backtracking_tasks
-        import blocks_hybrid
-        import blocks_tasks
-        import blocks_goals
+        import simple_hgn
+        import simple_htn
+        import simple_htn_with_error
+        import backtracking_htn
+        import blocks_gtn
+        import blocks_htn
+        import blocks_hgn
         import blocks_goal_splitting
-        import logistics_goals
+        import logistics_hgn
         import pyhop_simple_travel_example
 
 ### Further reading
 
   - The best overall description of GTPyhop is [[Nau21](#Nau21)].
-  - [Some GTPyhop Details](Some_GTPyhop_Details.md) discusses some details of GTPyhop's operation, compares it to some other planners, and discusses backward-compatibility with Pyhop.
-  - GTPyhop does a totally-ordered version of Goal-Task-Network (GTN) planning without sharing and task insertion. For precise definitions of those terms and their theoretical properties, see [[Alf16](#Alf16)].
-  - [[Ban21](#Ban21)] describes a re-entrant version of GTPyhop that has some advantages for integration of acting and planning.
+  - [Some Remarks about GTPyhop](Some_Remarks_about_GTPyhop.md) discusses some details of GTPyhop's operation, compares it to some other planners, and discusses backward-compatibility with Pyhop.
+  - GTPyhop does a totally-ordered version of Goal-Task-Network (GTN) planning without sharing and task insertion. For definitions of those terms and their theoretical properties, see [[Alf16](#Alf16)].
+  - [[Ban21](#Ban21)] describes a re-entrant version of GTPyhop that has some advantages for integrating acting and planning.
   
 
 ### References
@@ -54,7 +54,7 @@ In *IJCAI*, 2016, pp. 3022–3028.
 
 <span id="Ban21">[Ban21]</span> Y. Bansod, D.S. Nau, S. Patra and M. Roberts.
 [Integrating Planning and Acting by Using a Re-Entrant HTN Planner](https://www.cs.umd.edu/~nau/papers/bansod2021integrating). 
-In *ICAPS HPlan Workshop*, 2021.
+In *ICAPS Workshop on Hierarchical Planning (HPlan)*, 2021. 
 
 <span id="Gha16">[Gha16]</span> M. Ghallab, D.S. Nau, and P. Traverso.
 [*Automated Planning and Acting*](http://www.laas.fr/planning). 
@@ -65,7 +65,7 @@ In *ICAPS Workshop on Planning in Games*, 2013. Invited talk.
 
 <span id="Nau21">[Nau21]</span> D.S. Nau, S. Patra, M. Roberts, Y. Bansod and R. Li.
 [GTPyhop: A Hierarchical Goal+Task Planner Implemented in Python](http://www.cs.umd.edu/users/nau/papers/nau2021gtpyhop.pdf). 
-In *ICAPS HPlan Workshop*, 2021. 
+In *ICAPS Workshop on Hierarchical Planning (HPlan)*, 2021. 
 
 <span id="Shi12">[Shi12]</span> V. Shivashankar, U. Kuter, D.S. Nau, and R. Alford.
 [A hierarchical goal-based formalism and algorithm for single-agent planning](https://www.cs.umd.edu/~nau/papers/shivashankar2012hierarchical.pdf). 

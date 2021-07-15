@@ -1,7 +1,7 @@
 """
-Action definitions for the blocks_hybrid, blocks_tasks, blocks_goals, and
+Action definitions for the blocks_gtn, blocks_htn, blocks_hgn, and
 blocks_goal_splitting examples.
--- Dana Nau <nau@umd.edu>, July 6, 2021
+-- Dana Nau <nau@umd.edu>, July 14, 2021
 """
 
 import gtpyhop

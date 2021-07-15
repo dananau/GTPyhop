@@ -1,6 +1,6 @@
 """
 Method definitions for blocks_goal_splitting.
--- Dana Nau <nau@umd.edu>, July 6, 2021
+-- Dana Nau <nau@umd.edu>, July 14, 2021
 """
 
 import gtpyhop
@@ -21,8 +21,8 @@ gtpyhop.declare_multigoal_methods(gtpyhop.m_split_multigoal)
 def m_move1(state,b1,b2):
     """
     If goal is ('pos',b1,b2) and we're holding nothing, then assert goals to
-    get b1 and put it on b2. This method wasn't needed in the blocks_tasks,
-    blocks_hybrid, and blocks_goals domains.
+    get b1 and put it on b2. This method wasn't needed in the blocks_htn,
+    blocks_gtn, and blocks_hgn domains.
     """
     if  b2 != 'hand' and not state.holding['hand']:
         if b2 == 'table':

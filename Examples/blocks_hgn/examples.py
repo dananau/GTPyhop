@@ -1,6 +1,6 @@
 """
-Examples file for blocks_tasks.
--- Dana Nau <nau@umd.edu>, July 6, 2021
+Examples file for blocks_hgn.
+-- Dana Nau <nau@umd.edu>, July 14, 2021
 """
 
 # Uncomment this to use it in debugging:
@@ -54,7 +54,7 @@ def main(do_pauses=True):
     plan = gtpyhop.find_plan(state1,[('pickup','b')])
     th.check_result(plan,False)
 
-    plan = gtpyhop.find_plan(state1,[('take','b')])
+    plan = gtpyhop.find_plan(state1,[('pos','b','hand')])
     th.check_result(plan,False)
 
     th.pause(do_pauses)
@@ -66,21 +66,28 @@ block a is on block b, block b is on the table, and block c is on the table.
     plan = gtpyhop.find_plan(state1,[('pickup','c')])
     th.check_result(plan, [('pickup','c')])
 
-    plan = gtpyhop.find_plan(state1,[('take','a')])
+    plan = gtpyhop.find_plan(state1,[('unstack','a','b')])
     th.check_result(plan, [('unstack','a', 'b')])
 
-    plan = gtpyhop.find_plan(state1,[('take','c')])
-    th.check_result(plan, [('pickup','c')])
+    plan = gtpyhop.find_plan(state1,[('pos','a','b')])
+    th.check_result(plan, [])
 
-    plan = gtpyhop.find_plan(state1,[('take','a'),('put','a','table')])
-    th.check_result(plan, [('unstack','a', 'b'), ('putdown','a')])
-    th.pause(do_pauses)
+    plan = gtpyhop.find_plan(state1,[('pos','a','hand')])
+    th.check_result(plan, [('unstack','a', 'b')])
+
+    plan = gtpyhop.find_plan(state1,[('pos','c','hand')])
+    th.check_result(plan, [('pickup','c')])
 
 
     print("""
-A Multigoal is a data structure that specifies desired values for some of
-the state variables. Below, goal1a says we want the blocks in the
-configuration "c on b, b on a, a on the table".
+A Multigoal is a data structure that specifies desired values for some of the
+state variables. In blocks_htn.py there are examples of tasks whose arguments
+are multigoals, but here we give the multigoals directly to find_plan.
+
+Below, goal1a says we want the blocks in the configuration "c on b on a on the
+table", and goal1b says we want "c on b on a" without specifying where block a
+should be. However, goal1a and goal1b have the same solution plans, because
+"a on b on c" entails "a on the table".
 """)
 
     state1.display("Initial state is")
@@ -90,10 +97,10 @@ configuration "c on b, b on a, a on the table".
 
     goal1a.display()
     
-    print("""
-We don't have any methods for multigoals, but we have a task method for
-('achieve' mg), the task of achieving multigoal mg. Here's ('achieve', goal1a):
-    """)
+    goal1b = gtpyhop.Multigoal('goal1b')
+    goal1b.pos={'c':'b', 'b':'a'}
+
+    goal1b.display()
 
     # Tell the test harness what answer to expect, so it can signal an error
     # if gtpyhop returns an incorrect answer. Checks like this have been very
@@ -101,25 +108,11 @@ We don't have any methods for multigoals, but we have a task method for
 
     expected = [('unstack', 'a', 'b'), ('putdown', 'a'), ('pickup', 'b'), ('stack', 'b', 'a'), ('pickup', 'c'), ('stack', 'c', 'b')] 
 
-    plan1 = gtpyhop.find_plan(state1,[('achieve', goal1a)])
+    plan1 = gtpyhop.find_plan(state1,[goal1a])
     th.check_result(plan1,expected)
-    th.pause(do_pauses)
 
-    print("""
-goal1b says we want c on b on a. It omits "a on table", but it still has the
-same solution as goal1a, because "c on b on a" entails "a on table". 
-""")
-
-    goal1b = gtpyhop.Multigoal('goal1b')
-    goal1b.pos={'c':'b', 'b':'a'}
-
-    goal1b.display()
-
-    gtpyhop.verbose = 2
-    plan2 = gtpyhop.find_plan(state1,[('achieve', goal1b)])
+    plan2 = gtpyhop.find_plan(state1,[goal1b])
     th.check_result(plan2,expected)
-    gtpyhop.verbose = 1
-
     th.pause(do_pauses)
 
 
@@ -127,30 +120,30 @@ same solution as goal1a, because "c on b on a" entails "a on table".
 Run find_plan on the famous Sussman anomaly.
 """)
 
-    suss0 = gtpyhop.State('Sussman anomaly initial state')
-    suss0.pos={'c':'a', 'a':'table', 'b':'table'}
-    suss0.clear={'c':True, 'a':False,'b':True}
-    suss0.holding={'hand':False}
+    sus_s0 = gtpyhop.State('Sussman anomaly initial state')
+    sus_s0.pos={'a':'table', 'b':'table', 'c':'a'}
+    sus_s0.clear={'a':False,'b':True, 'c':True}
+    sus_s0.holding={'hand':False}
 
-    suss0.display()
+    sus_s0.display()
     
-    sussg = gtpyhop.Multigoal('Sussman anomaly multigoal')
-    sussg.pos={'a':'b', 'b':'c'}
+    sus_sg = gtpyhop.Multigoal('Sussman anomaly multigoal')
+    sus_sg.pos={'a':'b', 'b':'c'}
 
-    sussg.display()
+    sus_sg.display()
 
     expected = [('unstack', 'c', 'a'), ('putdown', 'c'), ('pickup', 'b'), ('stack', 'b', 'c'), ('pickup', 'a'), ('stack', 'a', 'b')] 
 
-    sussman_plan = gtpyhop.find_plan(suss0,[('achieve', sussg)])
+    sussman_plan = gtpyhop.find_plan(sus_s0,[sus_sg])
     th.check_result(sussman_plan,expected)
 
     th.pause(do_pauses)
 
     print("""
-Another initial state and two multigoals, goal2a and goal2b, such that
-('achieve', goal2a) and ('achieve', goal2b) have the same solutions.
+Run find_plan on two more planning problems. Like before, goal2b omits some
+of the conditions in goal2a, but both goals should produce the same plan.
 """)
-    
+
     state2 = gtpyhop.State('state2')
     state2.pos={'a':'c', 'b':'d', 'c':'table', 'd':'table'}
     state2.clear={'a':True, 'c':False,'b':True, 'd':False}
@@ -175,15 +168,10 @@ Another initial state and two multigoals, goal2a and goal2b, such that
 
     expected = [('unstack', 'a', 'c'), ('putdown', 'a'), ('unstack', 'b', 'd'), ('stack', 'b', 'c'), ('pickup', 'a'), ('stack', 'a', 'd')] 
 
-#     th.pause(do_pauses)
-#     print("When we run find_plan on the tasks ('achieve', goal2a) and")
-#     print("('achieve', goal2b), it produces the same plan for both:")
-
-
-    plan1 = gtpyhop.find_plan(state2,[('achieve', goal2a)])
+    plan1 = gtpyhop.find_plan(state2,[goal2a])
     th.check_result(plan1,expected)
 
-    plan2 = gtpyhop.find_plan(state2,[('achieve', goal2b)])
+    plan2 = gtpyhop.find_plan(state2,[goal2b])
     th.check_result(plan2,expected)
     th.pause(do_pauses)
 
@@ -206,7 +194,7 @@ Another initial state and two multigoals, goal2a and goal2b, such that
     
     expected = [('unstack', 1, 12), ('putdown', 1), ('unstack', 19, 18), ('putdown', 19), ('unstack', 18, 17), ('putdown', 18), ('unstack', 17, 16), ('putdown', 17), ('unstack', 9, 8), ('putdown', 9), ('unstack', 8, 7), ('putdown', 8), ('unstack', 11, 10), ('stack', 11, 7), ('unstack', 10, 5), ('putdown', 10), ('unstack', 5, 4), ('putdown', 5), ('unstack', 4, 14), ('putdown', 4), ('pickup', 9), ('stack', 9, 4), ('pickup', 8), ('stack', 8, 9), ('unstack', 14, 15), ('putdown', 14), ('unstack', 16, 3), ('stack', 16, 11), ('unstack', 3, 2), ('stack', 3, 16), ('pickup', 2), ('stack', 2, 3), ('unstack', 12, 13), ('stack', 12, 2), ('pickup', 13), ('stack', 13, 8), ('pickup', 15), ('stack', 15, 13)] 
 
-    plan = gtpyhop.find_plan(state3,[('achieve', goal3)])
+    plan = gtpyhop.find_plan(state3,[goal3])
     th.check_result(plan,expected)
     th.pause(do_pauses)
 
@@ -244,7 +232,7 @@ Another initial state and two multigoals, goal2a and goal2b, such that
 
     expected = [('unstack', 7, 31), ('putdown', 7), ('unstack', 10, 34), ('putdown', 10), ('unstack', 12, 17), ('putdown', 12), ('unstack', 13, 20), ('putdown', 13), ('unstack', 17, 32), ('putdown', 17), ('unstack', 20, 22), ('putdown', 20), ('unstack', 22, 38), ('putdown', 22), ('unstack', 23, 11), ('putdown', 23), ('unstack', 11, 15), ('putdown', 11), ('unstack', 15, 44), ('putdown', 15), ('unstack', 31, 29), ('putdown', 31), ('unstack', 29, 19), ('putdown', 29), ('unstack', 19, 30), ('putdown', 19), ('unstack', 30, 39), ('putdown', 30), ('unstack', 39, 18), ('putdown', 39), ('pickup', 17), ('stack', 17, 39), ('unstack', 18, 50), ('putdown', 18), ('unstack', 34, 14), ('putdown', 34), ('unstack', 14, 2), ('putdown', 14), ('unstack', 2, 33), ('putdown', 2), ('unstack', 38, 9), ('putdown', 38), ('unstack', 9, 49), ('putdown', 9), ('unstack', 49, 25), ('putdown', 49), ('unstack', 44, 26), ('stack', 44, 49), ('pickup', 29), ('stack', 29, 44), ('unstack', 25, 46), ('putdown', 25), ('unstack', 46, 42), ('putdown', 46), ('unstack', 42, 4), ('putdown', 42), ('unstack', 4, 37), ('putdown', 4), ('unstack', 37, 8), ('putdown', 37), ('unstack', 8, 28), ('putdown', 8), ('unstack', 28, 43), ('stack', 28, 29), ('pickup', 38), ('stack', 38, 28), ('unstack', 43, 24), ('putdown', 43), ('unstack', 50, 6), ('putdown', 50), ('unstack', 6, 16), ('stack', 6, 17), ('pickup', 32), ('stack', 32, 6), ('pickup', 37), ('stack', 37, 32), ('pickup', 7), ('stack', 7, 37), ('unstack', 16, 5), ('putdown', 16), ('unstack', 5, 45), ('putdown', 5), ('unstack', 45, 47), ('putdown', 45), ('unstack', 47, 1), ('putdown', 47), ('unstack', 1, 48), ('putdown', 1), ('unstack', 48, 21), ('stack', 48, 22), ('unstack', 21, 27), ('putdown', 21), ('unstack', 27, 40), ('putdown', 27), ('unstack', 40, 3), ('stack', 40, 24), ('unstack', 3, 41), ('stack', 3, 40), ('unstack', 41, 35), ('stack', 41, 38), ('pickup', 9), ('stack', 9, 41), ('pickup', 31), ('stack', 31, 9), ('pickup', 16), ('stack', 16, 31), ('unstack', 35, 36), ('stack', 35, 2), ('pickup', 27), ('stack', 27, 35), ('pickup', 36), ('stack', 36, 7), ('pickup', 26), ('stack', 26, 36), ('pickup', 10), ('stack', 10, 26), ('pickup', 33), ('stack', 33, 10), ('pickup', 1), ('stack', 1, 33), ('pickup', 19), ('stack', 19, 1), ('pickup', 15), ('stack', 15, 19), ('pickup', 8), ('stack', 8, 15), ('pickup', 30), ('stack', 30, 8), ('pickup', 47), ('stack', 47, 30), ('pickup', 13), ('stack', 13, 47), ('pickup', 50), ('stack', 50, 13), ('pickup', 18), ('stack', 18, 50), ('pickup', 46), ('stack', 46, 18), ('pickup', 4), ('stack', 4, 46), ('pickup', 45), ('stack', 45, 4), ('pickup', 20), ('stack', 20, 45), ('pickup', 14), ('stack', 14, 20), ('pickup', 34), ('stack', 34, 14), ('pickup', 42), ('stack', 42, 34), ('pickup', 25), ('stack', 25, 42), ('pickup', 12), ('stack', 12, 25), ('pickup', 43), ('stack', 43, 12), ('pickup', 23), ('stack', 23, 43), ('pickup', 11), ('stack', 11, 23), ('pickup', 21), ('stack', 21, 11), ('pickup', 5), ('stack', 5, 21)] 
     
-    plan = gtpyhop.find_plan(IPC2011BWrand50,[('achieve', IPC2011BWrand50Goal)])
+    plan = gtpyhop.find_plan(IPC2011BWrand50, [IPC2011BWrand50Goal])
     th.check_result(plan,expected)
     th.pause(do_pauses)
 
@@ -255,13 +243,13 @@ Call run_lazy_lookahead on the following problem, with verbose=1:
     state2.display(heading='Initial state is')
     goal2b.display(heading='Goal is')
 
-    new_state = gtpyhop.run_lazy_lookahead(state2, [('achieve', goal2b)])
+    new_state = gtpyhop.run_lazy_lookahead(state2, [goal2b])
 
     th.pause(do_pauses)
 
     print("The goal should now be satisfied, so the planner should return an empty plan:\n")
 
-    plan = gtpyhop.find_plan(new_state, [('achieve', goal2b)])
+    plan = gtpyhop.find_plan(new_state, [goal2b])
     th.check_result(plan,[])
 
     print("No more examples")

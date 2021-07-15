@@ -1,6 +1,6 @@
 """
-Method definitions for blocks_goals.
--- Dana Nau <nau@umd.edu>, July 6, 2021
+Method definitions for blocks_hgn.
+-- Dana Nau <nau@umd.edu>, July 14, 2021
 """
 
 import gtpyhop
@@ -94,7 +94,7 @@ gtpyhop.declare_multigoal_methods(m_moveblocks)
 ################################################################################
 # methods for 'pos' goals.
 #
-# In the blocks_tasks and blocks_hybrid domains, the m_take and m_put methods
+# In the blocks_htn and blocks_gtn domains, the m_take and m_put methods
 # have simpler preconditions, because the task names 'take' and 'put' tell when
 # to use each method.  Here, each method needs some additional preconditions to
 # tell what kind of 'pos' task it's for.

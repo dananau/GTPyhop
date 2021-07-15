@@ -1,6 +1,6 @@
 """
 Examples file for blocks_goal_splitting.
--- Dana Nau <nau@umd.edu>, July 6, 2021
+-- Dana Nau <nau@umd.edu>, July 14, 2021
 """
 
 # Uncomment this to use it in debugging:

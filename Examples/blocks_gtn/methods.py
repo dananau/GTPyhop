@@ -1,6 +1,6 @@
 """
-Method definitions for blocks_hybrid.
--- Dana Nau <nau@umd.edu>, July 6, 2021
+Method definitions for blocks_gtn.
+-- Dana Nau <nau@umd.edu>, July 14, 2021
 """
 
 import gtpyhop

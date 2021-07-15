@@ -1,6 +1,6 @@
 """
-Examples file for blocks_goals.
--- Dana Nau <nau@umd.edu>, July 6, 2021
+Examples file for blocks_gtn.
+-- Dana Nau <nau@umd.edu>, July 14, 2021
 """
 
 # Uncomment this to use it in debugging:
@@ -54,7 +54,7 @@ def main(do_pauses=True):
     plan = gtpyhop.find_plan(state1,[('pickup','b')])
     th.check_result(plan,False)
 
-    plan = gtpyhop.find_plan(state1,[('pos','b','hand')])
+    plan = gtpyhop.find_plan(state1,[('take','b')])
     th.check_result(plan,False)
 
     th.pause(do_pauses)
@@ -66,28 +66,24 @@ block a is on block b, block b is on the table, and block c is on the table.
     plan = gtpyhop.find_plan(state1,[('pickup','c')])
     th.check_result(plan, [('pickup','c')])
 
-    plan = gtpyhop.find_plan(state1,[('unstack','a','b')])
+    plan = gtpyhop.find_plan(state1,[('take','a')])
     th.check_result(plan, [('unstack','a', 'b')])
 
-    plan = gtpyhop.find_plan(state1,[('pos','a','b')])
-    th.check_result(plan, [])
-
-    plan = gtpyhop.find_plan(state1,[('pos','a','hand')])
-    th.check_result(plan, [('unstack','a', 'b')])
-
-    plan = gtpyhop.find_plan(state1,[('pos','c','hand')])
+    plan = gtpyhop.find_plan(state1,[('take','c')])
     th.check_result(plan, [('pickup','c')])
+
+    plan = gtpyhop.find_plan(state1,[('take','a'),('put','a','table')])
+    th.check_result(plan, [('unstack','a', 'b'), ('putdown','a')])
+    th.pause(do_pauses)
 
 
     print("""
-A Multigoal is a data structure that specifies desired values for some of the
-state variables. In blocks_tasks.py there are examples of tasks whose arguments
-are multigoals, but here we give the multigoals directly to find_plan.
-
-Below, goal1a says we want the blocks in the configuration "c on b on a on the
-table", and goal1b says we want "c on b on a" without specifying where block a
-should be. However, goal1a and goal1b have the same solution plans, because
-"a on b on c" entails "a on the table".
+A Multigoal is a data structure that specifies desired values for some of
+the state variables. Below, goal1a says we want the blocks in the
+configuration "c on b, b on a, a on the table", and goal1b says we want "c
+on b, b on a" without specifying where block a should be. However, goal1a
+and goal1b have the same solution plans, because "c on b, b on a" entails "a
+on the table".
 """)
 
     state1.display("Initial state is")

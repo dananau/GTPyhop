@@ -11,11 +11,11 @@ tries, thus producing solution plans that are much longer than optimal.
 This would work much better if GTPyhop had an intelligent way to choose an
 order in which to achieve the unigoals. To accomplish that, we would need
 either to write a domain-specific multigoal method and use it instead of
-m_split_multigoals (as in the blocks_hybrid, blocks_tasks, and blocks_goals
+m_split_multigoals (as in the blocks_gtn, blocks_htn, and blocks_hgn
 domains), or to modify m_split_multigoals to use a heuristic function to
 reorder its list of unigoals.
 
--- Dana Nau <nau@umd.edu>, July 6, 2021
+-- Dana Nau <nau@umd.edu>, July 14, 2021
 """
 
 # kludge to make gtpyhop available regardless of whether the current directory
