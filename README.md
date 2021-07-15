@@ -27,16 +27,16 @@ GTPyhop also provides a `Domain` class to contain the actions, tasks, goals, and
   
   - Several example problem domains. Go to the `Examples` directory, launch Python 3, and try one or more of the following:
 
-        import simple_hgn
-        import simple_htn
-        import simple_htn_with_error
-        import backtracking_htn
-        import blocks_gtn
-        import blocks_htn
-        import blocks_hgn
-        import blocks_goal_splitting
-        import logistics_hgn
-        import pyhop_simple_travel_example
+        import simple_hgn                   # some simple goal-planning examples
+        import simple_htn                   # some simple task-planning examples
+        import simple_htn_acting_error      # demonstration of an acting-time problem
+        import backtracking_htn             # simple demonstration of backtracking
+        import blocks_gtn                   # goal-task-planning version of the blocks world
+        import blocks_htn                   # task-planning version of the blocks world
+        import blocks_hgn                   # goal-planning version of the blocks world
+        import blocks_goal_splitting        # separating goals and solving them sequentially
+        import logistics_hgn                # adaptation of the "logistics" domain
+        import pyhop_simple_travel_example  # a near-verbatim adaptation of a Pyhop example
 
 ### Further reading
 
@@ -53,8 +53,8 @@ GTPyhop also provides a `Domain` class to contain the actions, tasks, goals, and
 In *IJCAI*, 2016, pp. 3022–3028.
 
 <span id="Ban21">[Ban21]</span> Y. Bansod, D.S. Nau, S. Patra and M. Roberts.
-[Integrating Planning and Acting by Using a Re-Entrant HTN Planner](https://www.cs.umd.edu/~nau/papers/bansod2021integrating). 
-In *ICAPS Workshop on Hierarchical Planning (HPlan)*, 2021. 
+Integrating Planning and Acting by Using a Re-Entrant HTN Planner. 
+In *ICAPS Workshop on Hierarchical Planning (HPlan)*, 2021, to appear.
 
 <span id="Gha16">[Gha16]</span> M. Ghallab, D.S. Nau, and P. Traverso.
 [*Automated Planning and Acting*](http://www.laas.fr/planning). 
@@ -64,8 +64,8 @@ Cambridge University Press, Sept. 2016.
 In *ICAPS Workshop on Planning in Games*, 2013. Invited talk.
 
 <span id="Nau21">[Nau21]</span> D.S. Nau, S. Patra, M. Roberts, Y. Bansod and R. Li.
-[GTPyhop: A Hierarchical Goal+Task Planner Implemented in Python](http://www.cs.umd.edu/users/nau/papers/nau2021gtpyhop.pdf). 
-In *ICAPS Workshop on Hierarchical Planning (HPlan)*, 2021. 
+GTPyhop: A Hierarchical Goal+Task Planner Implemented in Python.
+In *ICAPS Workshop on Hierarchical Planning (HPlan)*, 2021, to appear.
 
 <span id="Shi12">[Shi12]</span> V. Shivashankar, U. Kuter, D.S. Nau, and R. Alford.
 [A hierarchical goal-based formalism and algorithm for single-agent planning](https://www.cs.umd.edu/~nau/papers/shivashankar2012hierarchical.pdf). 
