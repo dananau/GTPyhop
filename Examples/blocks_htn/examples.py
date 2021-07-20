@@ -127,21 +127,21 @@ same solution as goal1a, because "c on b on a" entails "a on table".
 Run find_plan on the famous Sussman anomaly.
 """)
 
-    suss0 = gtpyhop.State('Sussman anomaly initial state')
-    suss0.pos={'c':'a', 'a':'table', 'b':'table'}
-    suss0.clear={'c':True, 'a':False,'b':True}
-    suss0.holding={'hand':False}
+    sus_s0 = gtpyhop.State('Sussman anomaly initial state')
+    sus_s0.pos={'c':'a', 'a':'table', 'b':'table'}
+    sus_s0.clear={'c':True, 'a':False,'b':True}
+    sus_s0.holding={'hand':False}
 
-    suss0.display()
+    sus_s0.display()
     
-    sussg = gtpyhop.Multigoal('Sussman anomaly multigoal')
-    sussg.pos={'a':'b', 'b':'c'}
+    sus_sg = gtpyhop.Multigoal('Sussman anomaly multigoal')
+    sus_sg.pos={'a':'b', 'b':'c'}
 
-    sussg.display()
+    sus_sg.display()
 
     expected = [('unstack', 'c', 'a'), ('putdown', 'c'), ('pickup', 'b'), ('stack', 'b', 'c'), ('pickup', 'a'), ('stack', 'a', 'b')] 
 
-    sussman_plan = gtpyhop.find_plan(suss0,[('achieve', sussg)])
+    sussman_plan = gtpyhop.find_plan(sus_s0,[('achieve', sus_sg)])
     th.check_result(sussman_plan,expected)
 
     th.pause(do_pauses)
