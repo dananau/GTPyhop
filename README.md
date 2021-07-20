@@ -41,7 +41,7 @@ GTPyhop also provides a `Domain` class to contain the actions, tasks, goals, and
 ### Further reading
 
   - The best overall description of GTPyhop is [[Nau21](#Nau21)].
-  - [Some Remarks about GTPyhop](Some_Remarks_about_GTPyhop.md) discusses some details of GTPyhop's operation, compares it to some other planners, and discusses backward-compatibility with Pyhop.
+  - [Some Remarks about GTPyhop](some_remarks_about_gtpyhop.md) discusses some details of GTPyhop's operation, compares it to some other planners, and discusses backward-compatibility with Pyhop.
   - GTPyhop does a totally-ordered version of Goal-Task-Network (GTN) planning without sharing and task insertion. For definitions of those terms and their theoretical properties, see [[Alf16](#Alf16)].
   - [[Ban21](#Ban21)] describes a re-entrant version of GTPyhop that has some advantages for integrating acting and planning.
   
