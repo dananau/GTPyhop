@@ -1,5 +1,5 @@
 
-# Some Remarks about GTPyhop
+# Additional Information
 
 > **Dana S. Nau**  
 > University of Maryland  
@@ -18,8 +18,8 @@ Before reading this document, you might want to read [[Nau21](#Nau21)] to get so
  3. [Goals and goal methods](#Goals)
  4. [Other properties of goals and tasks](#Other)
  5. [Backward compatibility with Pyhop](#Pyhop)
- 6. [Comparisons with other planners](#GDP)
-     6.1. [GDP and GoDeL](#GDP)
+ 6. [Comparisons with other planners](#GDP)  
+     6.1. [GDP and GoDeL](#GDP)  
      6.2. [HGNpyhop](#HGNpyhop)
  7. [References](#References)
 
@@ -276,7 +276,7 @@ If a domain definition includes such methods for all of the actions, then GTPyho
 
 ### <span id="HGNpyhop">6.2. HGNPyhop</span>
 
-There is a fork of Pyhop called [HGNpyhop](https://github.com/ospur/hgn-pyhop) in which one may declare an action to be directly relevant for a goal. At first glance, this seems like a desirable feature, and I seriously considered adding it to GTPyhop -- but I ultimately decided against it, because it imposes significant restriction on how the planner can use the action.
+There is a fork of Pyhop called [HGNpyhop](https://github.com/ospur/hgn-pyhop) in which one may declare an action to be directly relevant for a goal. This seems like a nice feature, and I seriously considered adding it to GTPyhop -- but I ultimately decided against it, because it creates unfortunate restrictions on how the actions can be used.
 
 In HGNPyhop, to declare an action relevant for a goal of the form `(variable, arg, value)`, the action must be callable as `action_name(arg,value)`. Consider what this means for goals 1 and 2 in the previous section:
 
@@ -303,7 +303,7 @@ In HGNPyhop, to declare an action relevant for a goal of the form `(variable, ar
 
         hgn_pyhop.declare_operators('cargo', unload)
  
-Both rewrites make the `unload` action harder to understand -- and neither of them makes `unload` relevant for both goals, as it would be in GDP and Godel. To accomplish this in HGNpyhop, I think something like the following *might* work, though I haven't tested it to make sure:
+Both rewrites make the `unload` action harder to understand -- and neither of them makes it relevant for *both* goals. To accomplish that in HGNpyhop, I think something like the following *might* work, though I haven't tested it to make sure:
 
     def unload(state, arg1, arg2):
         if is_a(arg1,'container') and is_a(arg2,'loc'):
@@ -323,9 +323,9 @@ Both rewrites make the `unload` action harder to understand -- and neither of th
     hgn_pyhop.declare_operators('loc', unload)
     hgn_pyhop.declare_operators('cargo', unload)
 
-This definition doesn't seem very intuitive. Furthermore, one can construct examples of other actions and goals for which an `is_a` test on the arguments would not be sufficient to tell which piece of code to execute. 
+This definition is much harder to understand than the original one. Furthermore, one can construct examples of other actions and goals for which an `is_a` test on the arguments would not be sufficient to tell which piece of code to execute. 
 
-To summarize: it is easy to tell HGNpyhop that an action *a* is relevant for achieving a particular one of its effects, but this precludes us from telling HGNpyhop that *a* is relevant for achieving any of its other effects. If those effects are goals that we want to achieve, HGNpyhop will be unable to use *a* to achieve them.
+To summarize: it can be difficult to tell HGNpyhop that an action *a* is relevant for achieving a particular one of its effects, and even more difficult to tell HGNpyhop that *a* also is relevant for achieving its other effects. Without a way to do this, if those effects are goals that we want to achieve, HGNpyhop won't be able to use *a* to achieve them.
 
 In GTPyhop, we can overcome this problem by defining, for each effect *e* of *a*, a unigoal_method for *e* that returns the list [*a*]. This is possible because GTPyhop allows actions to appear in the list of items returned by a method -- which is not allowed in HGNpyhop, nor in HGN planners such as GDP and GoDel.
 

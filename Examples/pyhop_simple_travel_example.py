@@ -7,13 +7,13 @@ minor changes to make it compatible with GTPyhop:
 
 To keep this file as close as possible to the Pyhop version, it doesn't use
 the test harness that's used with the other example files.
--- Dana Nau <nau@umd.edu>, July 6, 2021
+-- Dana Nau <nau@umd.edu>, July 20, 2021
 """
 
-# This change isn't for compatibility with GTPyhop, it's a kludge to make
-# gtpyhop.py available to Python regardless of what the current directory
-# is. We wouldn't need it if pyhop_simple_travel_example.py and gtpyhop.py
-# were in the same directory.
+# The following change isn't for compatibility with GTPyhop, it's a kludge
+# to make gtpyhop.py available to Python regardless of what the current
+# directory is. If pyhop_simple_travel_example.py and gtpyhop.py were in the
+# same directory, we wouldn't need it.
 #
 import sys
 sys.path.append('../')

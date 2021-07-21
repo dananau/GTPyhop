@@ -1,6 +1,6 @@
 """
 Examples file for blocks_goal_splitting.
--- Dana Nau <nau@umd.edu>, July 14, 2021
+-- Dana Nau <nau@umd.edu>, July 20, 2021
 """
 
 # Uncomment this to use it in debugging:
@@ -12,8 +12,8 @@ import test_harness as th   # code for use in paging and debugging
 
 
 # We must declare the current domain before importing methods and actions.
-# To make the code more portable, we don't hard the domain name, but instead
-# infer it from the package name.
+# To make the code more portable, we don't hard-code the domain name, but
+# instead use the name of the package.
 the_domain = gtpyhop.Domain(__package__)
 
 from .methods import *

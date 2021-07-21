@@ -3,7 +3,7 @@ This file is based on the logistics-domain examples included with HGNpyhop:
     https://github.com/ospur/hgn-pyhop
 For a discussion of the adaptations that were needed, see the relevant
 section of Some_GTPyhop_Details.md in the top-level directory.
--- Dana Nau <nau@umd.edu>, July 6, 2021
+-- Dana Nau <nau@umd.edu>, July 20, 2021
 """
 
 
@@ -16,7 +16,8 @@ import gtpyhop
 
 import test_harness as th   # code for use in paging and debugging
 
-# This avoids hard-coding the domain name, making the code more portable
+# Rather than hard-coding the domain name, use the name of the current file.
+# This makes the code more portable.
 domain_name = __name__
 the_domain = gtpyhop.Domain(domain_name)
 

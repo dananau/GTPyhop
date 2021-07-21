@@ -1,6 +1,6 @@
 """
 Some examples that show GTPyhop backtracking through several methods and tasks.
--- Dana Nau <nau@umd.edu>, July 6, 2021
+-- Dana Nau <nau@umd.edu>, July 20, 2021
 """
 
 import sys
@@ -14,7 +14,8 @@ import gtpyhop
 
 import test_harness as th   # code for use in paging and debugging
 
-# This avoids hard-coding the domain name, making the code more portable
+# Rather than hard-coding the domain name, use the name of the current file.
+# This makes the code more portable.
 domain_name = __name__
 the_domain = gtpyhop.Domain(domain_name)
 

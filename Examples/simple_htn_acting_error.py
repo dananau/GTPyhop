@@ -3,13 +3,12 @@ An expanded version of the "travel from home to the park" example in my
 lectures, modified to show how an unexpected problem at acting time can
 cause an execution error if the methods are too brittle.
 
-The following paper describes one of the possible ways to overcome this
-problem: 
+For a way to overcome this problem, see 
 
     Bansod, Nau, Patra and Roberts. Integrating Planning and Acting by Using
     a Re-Entrant HTN Planner. ICAPS HPlan Workshop, 2021.
 
--- Dana Nau <nau@umd.edu>, July 7, 2021
+-- Dana Nau <nau@umd.edu>, July 20, 2021
 """
 
 # kludge to make gtpyhop available regardless of whether the current directory
@@ -23,7 +22,8 @@ import random
 import test_harness as th   # code for use in paging and debugging
 
 
-# This avoids hard-coding the domain name, making the code more portable
+# Rather than hard-coding the domain name, use the name of the current file.
+# This makes the code more portable.
 domain_name = __name__
 the_domain = gtpyhop.Domain(domain_name)
 
