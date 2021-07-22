@@ -8,10 +8,10 @@
 
 GTPyhop is an automated planning system written in Python, that uses hierarchical planning techniques to construct plans of action for tasks and goals. GTPyhop plans for tasks in the same way as the [Pyhop](https://bitbucket.org/dananau/pyhop/) planner, and it is mostly backward-compatible with Pyhop. The way GTPyhop plans for goals is based on the [GDP](https://www.cs.umd.edu/~nau/papers/shivashankar2012hierarchical.pdf) algorithm.
 
-### Features
+Here are links to an
+[overview of GTPyhop](http://www.cs.umd.edu/~nau/papers/nau2021gtpyhop.pdf) and some [additional information](additional_information.md).
+Below is a brief summary of GTPyhop's features:
 
-Below is a brief summary of GTPyhop's main features. For more information, see
-[this overview of GTPyhop](http://www.cs.umd.edu/~nau/papers/nau2021gtpyhop.pdf), and [this additional information](additional_information.md).
 
 - GTPyhop creates a *plan* (a sequence of actions) to accomplish a *to-do* list *T* consisting of actions, tasks, and goals. The objective is to construct a *solution plan*, i.e., a sequence of actions that accomplishes all of the items in *T*, in the order that they occur in *T*.  To do this, GTPyhop does a backtracking search in a *planning domain* that includes definitions of the actions, *task methods* that return todo-lists for accomplishing tasks, and *goal methods* that return to-do lists for achieving goals.
 
@@ -22,13 +22,13 @@ Below is a brief summary of GTPyhop's main features. For more information, see
 
 
 
-### Other things in the GTPyhop distribution
+### Things in the GTPyhop distribution
+
+  - The [GTPyhop source file](gtpyhop.py) and the [open-source license](LICENSE.txt).
   
-  - A version of the Run-Lazy-Lookahead algorithm (see [*Automated Planning and Acting*](http://www.laas.fr/planning)), and several examples of integrated planning and acting using Run-Lazy-Lookahead and GTPyhop.
+  - A simple [test harness](test_harness.py) that's useful for debugging and demonstrating problem domains.
   
-  - A simple test harness that's useful for debugging and demonstrating problem domains.
-  
-  - Several example problem domains. Go to the `Examples` directory, launch Python 3, and try one or more of the following:
+  - Several example problem domains. Go to the [Examples](Examples) directory, launch Python 3, and try one or more of the following:
 
         import simple_htn                   # some simple task-planning examples
         import simple_hgn                   # some simple goal-planning examples
@@ -41,6 +41,8 @@ Below is a brief summary of GTPyhop's main features. For more information, see
         import pyhop_simple_travel_example  # example of near-backward-compatibility with Pyhop
         import simple_htn_acting_error      # example of a problem at acting time
 
+  - A version of the Run-Lazy-Lookahead algorithm described in [*Automated Planning and Acting*](http://www.laas.fr/planning), and several examples of integrated planning and acting using Run-Lazy-Lookahead and GTPyhop.
+  
   - The [additional information](additional_information.md) document mentioned earlier. It includes some details about states, actions, and methods, a discussion of backward-compatibility with Pyhop, and comparisons to other planners.
   
 
