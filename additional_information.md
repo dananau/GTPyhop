@@ -352,6 +352,12 @@ As an example of how to do this, see [Examples/logistics_hgn.py](Examples/logist
 
 ## <span id="References">8. References</span>
 
+<!--
+<span id="Alf16">[Alf16]</span> R. Alford, V. Shivashankar, M. Roberts, J. Frank, and D.W. Aha.
+[Hierarchical planning: relating task and goal decomposition with task sharing](https://www.ijcai.org/Abstract/16/429). 
+In *IJCAI*, 2016, pp. 3022–3028.
+-->
+
 <span id="Gha16">[Gha16]</span> M. Ghallab, D. S. Nau, and P. Traverso. [*Automated Planning and Acting*](http://www.laas.fr/planning). Cambridge University Press, Sept. 2016.
 
 <span id="Nau21">[Nau21]</span> D. Nau, S. Patra, M. Roberts, Y. Bansod and R. Li. [GTPyhop: A Hierarchical Goal+Task Planner Implemented in Python](http://www.cs.umd.edu/users/nau/papers/Nau21gtpyhop.pdf). ICAPS HPlan Workshop, 2021. 
