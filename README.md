@@ -3,26 +3,23 @@
 
 > **Dana S. Nau**  
 > University of Maryland  
-> July 14, 2021
+> July 22, 2021
 
 
-GTPyhop is an automated planning system that extends the 
-[Pyhop](https://bitbucket.org/dananau/pyhop/) HTN planner to do hierarchical planning for both tasks and goals. It plans for tasks the same way that Pyhop does, and it is mostly backward-compatible with Pyhop. The way it plans for goals is based on the [GDP algorithm](https://www.cs.umd.edu/~nau/papers/shivashankar2012hierarchical.pdf).
+GTPyhop is an automated planning system written in Python, that uses hierarchical planning techniques to construct plans of action for tasks and goals. GTPyhop plans for tasks in the same way as the [Pyhop](https://bitbucket.org/dananau/pyhop/) planner, and it is mostly backward-compatible with Pyhop. The way GTPyhop plans for goals is based on the [GDP](https://www.cs.umd.edu/~nau/papers/shivashankar2012hierarchical.pdf) algorithm.
 
-### How GTPyhop works
+### Features
 
-The best overview of GTPyhop is [the published paper about it](http://www.cs.umd.edu/~nau/papers/nau2021gtpyhop.pdf), but here's a brief summary of how it works.
+Below is a brief summary of GTPyhop's main features. For more information, see
+[this overview of GTPyhop](http://www.cs.umd.edu/~nau/papers/nau2021gtpyhop.pdf), and [these additional remarks](some_remarks.md).
 
-GTPyhop plans for a *to-do* list consisting of actions, tasks, and goals. It does this in a *planning domain* that includes definitions of actions, tasks, goals, and methods for achieving tasks and goals. 
+- GTPyhop creates a *plan* (a sequence of actions) to accomplish a *to-do* list *T* consisting of actions, tasks, and goals. The objective is to construct a *solution plan*, i.e., a sequence of actions that accomplishes all of the items in *T*, in the order that they occur in *T*.  To do this, GTPyhop does a backtracking search in a *planning domain* that includes definitions of the actions, *task methods* that return todo-lists for accomplishing tasks, and *goal methods* that return to-do lists for achieving goals.
 
-Given a planning domain, a current state *s* and a to-do list *T*, GTPyhop constructs a solution plan π by planning for the items in *T* one by one in sequence. Here are the possibilities for each item:
+- Since it may contain both tasks and actions, the to-do list *T* generalizes both Pyhop’s task list and GDP’s goal list. The same is true for the to-do lists returned by GTPyhop's task methods and goal methods.
 
-  - If the item is an applicable action, GTPyhop executes the action to update *s*, and appends it to π.
-  - If the item is a task, GTPyhop looks at the relevant task methods, and executes the first one that is applicable in *s*. This produces a (possibly empty) list of tasks, actions, and goals. GTPyhop inserts them into *T* to do next.
-  - If the item is a goal, GTPyhop looks at the relevant goal methods, and executes the first one that is applicable in *s*. This produces a (possibly empty) list of tasks, actions, and goals. GTPyhop inserts them into *T* to do next, along with a way to check whether they actually achieve the goal.
-  - Whenever one of the above steps fails (e.g., an action is inapplicable, a goal or task has no applicable methods, or a goal method doesn't achieve its goal), GTPyhop backtracks to the last point where it chose a method for a task or goal, to try a different method if one is available.
+- GTPyhop is mostly backward-compatible with Pyhop. However, GTPyhop also includes more documentation than Pyhop, additional debugging features, and the ability to load multiple planning domains into memory and switch among them without having to restart Python each time.
 
-When GTPyhop reaches the end of *T*, it returns π as the solution plan.
+
 
 
 ### Other things in the GTPyhop distribution
@@ -44,10 +41,12 @@ When GTPyhop reaches the end of *T*, it returns π as the solution plan.
         import pyhop_simple_travel_example  # example of near-backward-compatibility with Pyhop
         import simple_htn_acting_error      # example of a problem at acting time
 
-  - A document giving [additional information](additional_information.md), including comparisons to other planners and a discussion of backward-compatibility with Pyhop.
+  - The [additional remarks](some_remarks.md) document mentioned earlier. It include some details about states, actions, and methods, a discussion of backward-compatibility with Pyhop, and comparisons to other planners.
+  
 
 ### Miscellany
     
-  - [This paper](#Ban21) describes a re-entrant version of GTPyhop that has some advantages for integrating acting and planning (e.g., it overcomes the problem demonstrated in the `simple_htn_acting_error` file above.
-  - [Here is a paper](https://www.ijcai.org/Abstract/16/429) that classifies various kinds of hierarchical planning. In their terminology, GTPyhop's search strategy is a totally-ordered version of Goal-Task-Network (GTN) planning without sharing and task insertion.
+[//]: # "[This paper](#Ban21) describes a re-entrant version of GTPyhop that has some advantages for integrating acting and planning (e.g., it overcomes the problem demonstrated in the `simple_htn_acting_error` file above."
+  
+- [Here is a paper](https://www.ijcai.org/Abstract/16/429) that classifies various kinds of hierarchical planning. In their terminology, GTPyhop's search strategy is a totally-ordered version of Goal-Task-Network (GTN) planning without sharing and task insertion.
   

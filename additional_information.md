@@ -1,29 +1,47 @@
 
-# Additional Information
+# Additional Information about GTPyhop
 
 > **Dana S. Nau**  
 > University of Maryland  
-> July 14, 2021
+> July 22, 2021
 
-<hr>
+---
+
+## Contents
+
+ 1. [Planning algorithm](#Planning)
+ 2. [States and actions](#States)
+ 3. [Tasks and task methods](#Tasks)
+ 4. [Goals and goal methods](#Goals)
+ 5. [Other properties of goals and tasks](#Other)
+ 6. [Backward compatibility with Pyhop](#Pyhop)
+ 7. [Comparisons with other planners](#GDP)  
+     7.1. [GDP and GoDeL](#GDP)  
+     7.2. [HGNpyhop](#HGNpyhop)
+ 8. [References](#References)
+
+---
 
 Before reading this document, you might want to read [[Nau21](#Nau21)] to get some familarity with GTPyhop.
 
-<hr>
+## <span id="Planning">1. Planning algorithm</span>
 
-**Contents:**
+Here is a summary of GTPyhop's planning algorithm. For pseudocode, see [[Nau21](#Nau21)].
 
- 1. [States and actions](#States)
- 2. [Tasks and task methods](#Tasks)
- 3. [Goals and goal methods](#Goals)
- 4. [Other properties of goals and tasks](#Other)
- 5. [Backward compatibility with Pyhop](#Pyhop)
- 6. [Comparisons with other planners](#GDP)  
-     6.1. [GDP and GoDeL](#GDP)  
-     6.2. [HGNpyhop](#HGNpyhop)
- 7. [References](#References)
+GTPyhop starts with an initial [state](#States) *s*, and a *to-do* list *T* consisting of [actions](#States), [tasks](#Tasks), and [goals](#Goals). The objective is to construct a *solution plan* π, i.e., a sequence of actions that begins in *s* and accomplishes all of the items in *T* in left-to-right order. 
+GTPyhop does this in a *planning domain* that includes definitions of actions, methods for accomplishing tasks, and methods for achieving goals. 
 
-## <span id="States">1. States and actions</span>
+
+GTPyhop does a backtracking search, starting with an empty list π. It goes left-to-right through the items in *T*, and considers the following possibilities for each item:
+
+  - If the item is an applicable action *a*, GTPyhop executes *a* to update *s*, and appends *a* to π.
+  - If the item is a task *t*, GTPyhop looks for a task method that is both relevant for *t* and applicable in *s*, and uses it to get a to-do list for accomplishing *t*. GTPyhop inserts the items in this list into *T* to do next.
+  - If the item is a goal *g*, GTPyhop looks for a goal method that is both relevant for *g* and applicable in *s*, and uses it to get a to-do list for achieving *g*. GTPyhop inserts the items in this list into *T* to do next, along with a way to check whether they actually achieve *g*.
+  - Whenever one of the above steps fails (e.g., an action is inapplicable, a goal or task has no applicable methods, or a goal method doesn't achieve its goal), GTPyhop backtracks to the last point where it chose a method for a task or goal, to try a different method if one is available.
+
+If GTPyhop reaches the end of *T*, it returns π as the solution plan. If GTPyhop is unable to reach the end of *T*, it returns failure.
+
+## <span id="States">2. States and actions</span>
 
 ### States
 
@@ -68,7 +86,7 @@ In Pyhop there would be two minor differences:
  - The last line would begin with `pyhop` rather than `gtpyhop`.
  
 
-## <span id="Tasks">2. Tasks and task methods</span>
+## <span id="Tasks">3. Tasks and task methods</span>
 
 In GTPyhop, as in Pyhop, a task is written as a tuple that specifies an activity to perform, e.g.,
 
@@ -95,7 +113,7 @@ In Pyhop there would be two minor differences:
  - The last line would begin with `pyhop` rather than `gtpyhop`.
  
 
-## <span id="Goals">3. Goals and goal methods</span>
+## <span id="Goals">4. Goals and goal methods</span>
 
 GTPyhop has two types of goals: *unigoals* (individual goals) and *multigoals* (conjunctions of individual goals).
 
@@ -173,7 +191,7 @@ For the above method to work, we would need to define a unigoal method, e.g., `m
     gtpyhop.declare_unigoal_methods('loc', move_c_to_loc)
 
 
-## <span id="Other">4. Other properties of goals and tasks</span>
+## <span id="Other">5. Other properties of goals and tasks</span>
 
 ### Goal Task Network (GTN) Planning
 
@@ -196,7 +214,7 @@ An obvious question is whether such checks are useful. They may be useful while 
 Depending on feedback from users, I'll consider whether to make `verify_goals = False` the default.
 
 
-## <span id="Pyhop">5. Backward Compatibility with Pyhop</span>
+## <span id="Pyhop">6. Backward Compatibility with Pyhop</span>
 
 
 GTPyhop is mostly backward-compatible with Pyhop, but not completely so. Below is a list of the differences. To illustrate them, the [`pyhop_simple_travel_example`](Examples/pyhop_simple_travel_example) example domain is a near-verbatim adaptation of Pyhop's [simple travel example](https://bitbucket.org/dananau/pyhop/src/master/simple_travel_example.py).
@@ -216,9 +234,9 @@ GTPyhop is mostly backward-compatible with Pyhop, but not completely so. Below i
     \* There is a minor difference between these two functions. In Pyhop, if `'task1'` is a task name and you call `pyhop.declare_methods('task1', …)` more than once, the only methods for `task1` will be the ones in the last call. In GTPyhop, you can call `gtpyhop.declare_task_methods('task1', …)` more than once to add additional methods for `task1`.  
 
 
-## <span id="Comparisons">6. Comparisons with other planners</span>
+## <span id="Comparisons">7. Comparisons with other planners</span>
 
-### <span id="GDP">6.1. GDP and GoDel</span>
+### <span id="GDP">7.1. GDP and GoDel</span>
 
 In HGN planners such as GDP [[Shi12](#Shi12)] and GoDel [[Shi13](#Shi13)], an action *a* may be applied to a goal if the current state satisfies *a*'s preconditions, *a* has an effect that matches the goal, and none of *a*'s effects negate the goal. In contrast, GTPyhop does not apply actions directly to goals. GTPyhop will not put an action into the plan unless the action is in the agenda, either because it was there initially or because a method put it there.
 
@@ -274,7 +292,7 @@ If a domain definition includes such methods for all of the actions, then GTPyho
 
 
 
-### <span id="HGNpyhop">6.2. HGNPyhop</span>
+### <span id="HGNpyhop">7.2. HGNPyhop</span>
 
 There is a fork of Pyhop called [HGNpyhop](https://github.com/ospur/hgn-pyhop) in which one may declare an action to be directly relevant for a goal. This seems like a nice feature, and I seriously considered adding it to GTPyhop -- but I ultimately decided against it, because it creates unfortunate restrictions on how the actions can be used.
 
@@ -332,7 +350,7 @@ In GTPyhop, we can overcome this problem by defining, for each effect *e* of *a*
 As an example of how to do this, see [Examples/logistics_hgn.py](Examples/logistics_hgn.py)
 
 
-## <span id="References">7. References</span>
+## <span id="References">8. References</span>
 
 <span id="Gha16">[Gha16]</span> M. Ghallab, D. S. Nau, and P. Traverso. [*Automated Planning and Acting*](http://www.laas.fr/planning). Cambridge University Press, Sept. 2016.
 
