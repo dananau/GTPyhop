@@ -11,7 +11,7 @@ GTPyhop is an automated planning system written in Python, that uses hierarchica
 ### Features
 
 Below is a brief summary of GTPyhop's main features. For more information, see
-[this overview of GTPyhop](http://www.cs.umd.edu/~nau/papers/nau2021gtpyhop.pdf), and [these additional remarks](some_remarks.md).
+[this overview of GTPyhop](http://www.cs.umd.edu/~nau/papers/nau2021gtpyhop.pdf), and [this additional information](additional_information.md).
 
 - GTPyhop creates a *plan* (a sequence of actions) to accomplish a *to-do* list *T* consisting of actions, tasks, and goals. The objective is to construct a *solution plan*, i.e., a sequence of actions that accomplishes all of the items in *T*, in the order that they occur in *T*.  To do this, GTPyhop does a backtracking search in a *planning domain* that includes definitions of the actions, *task methods* that return todo-lists for accomplishing tasks, and *goal methods* that return to-do lists for achieving goals.
 
@@ -41,7 +41,7 @@ Below is a brief summary of GTPyhop's main features. For more information, see
         import pyhop_simple_travel_example  # example of near-backward-compatibility with Pyhop
         import simple_htn_acting_error      # example of a problem at acting time
 
-  - The [additional remarks](some_remarks.md) document mentioned earlier. It include some details about states, actions, and methods, a discussion of backward-compatibility with Pyhop, and comparisons to other planners.
+  - The [additional information](additional_information.md) document mentioned earlier. It includes some details about states, actions, and methods, a discussion of backward-compatibility with Pyhop, and comparisons to other planners.
   
 
 ### Miscellany
