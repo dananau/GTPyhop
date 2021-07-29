@@ -18,9 +18,7 @@ telling how to accomplish tasks, and *goal methods* telling how to achieve goals
 
 - GTPyhop is mostly backward-compatible with Pyhop. However, GTPyhop includes more documentation, more debugging features, and the ability to load multiple planning domains into memory and switch among them without having to restart Python each time.
 
-For further information, see this [overview of GTPyhop](http://www.cs.umd.edu/~nau/papers/nau2021gtpyhop.pdf) and this [additional information](additional_information.md). These documents are from the 2021 HPlan workshop and the GTPyhop software distribution, respectively.
-
-
+For further information, see this [overview of GTPyhop](http://www.cs.umd.edu/~nau/papers/nau2021gtpyhop.pdf) and this [additional information](additional_information.md).
 
 
 ### Things in the GTPyhop distribution
@@ -42,7 +40,7 @@ For further information, see this [overview of GTPyhop](http://www.cs.umd.edu/~n
 
   - A version of the Run-Lazy-Lookahead algorithm described in [*Automated Planning and Acting*](http://www.laas.fr/planning). The above test problems include demonstrations of integrated planning and acting using Run-Lazy-Lookahead and GTPyhop.
   
-  - The [additional information](additional_information.md) mentioned earlier. It includes some details about states, actions, and methods, a discussion of backward-compatibility with Pyhop, and comparisons to other planners.
+  - The [additional information](additional_information.md) document mentioned earlier. It includes some details about states, actions, and methods, a discussion of backward-compatibility with Pyhop, and comparisons to other planners. 
   
 
 ### Related work
@@ -51,8 +49,12 @@ For further information, see this [overview of GTPyhop](http://www.cs.umd.edu/~n
 [This paper](#Ban21) describes a re-entrant version of GTPyhop that has some advantages for integrating acting and planning (e.g., it overcomes the problem demonstrated in the `simple_htn_acting_error` file above.
 -->
 
-- [Slides from an invited talk](http://www.cs.umd.edu/~nau/papers/nau2013game.pdf) about Pyhop in the 2013 ICAPS Workshop on Planning in Games.
+- The [overview of GTPyhop](http://www.cs.umd.edu/~nau/papers/nau2021gtpyhop.pdf) mentioned above, from the 2021 HPlan workshop.
+
+- A paper about a [re-entrant version of GTPyhop](http://www.cs.umd.edu/~nau/papers/bansod2021integrating.pdf), from the 2021 HPlan workshop.
+
+- Slides from a [presentation about Pyhop](http://www.cs.umd.edu/~nau/papers/nau2013game.pdf) at the 2013 ICAPS Workshop on Planning in Games.
 
 
-- [A paper](https://www.ijcai.org/Abstract/16/429) that classifies various kinds of hierarchical planning. In their terminology, GTPyhop's search strategy is a totally-ordered version of Goal-Task-Network (GTN) planning, without sharing and task insertion.
+- A paper that classifies [various kinds of hierarchical planning](https://www.ijcai.org/Abstract/16/429). In their terminology, GTPyhop's search strategy is a totally-ordered version of Goal-Task-Network (GTN) planning, without sharing and task insertion.
   
